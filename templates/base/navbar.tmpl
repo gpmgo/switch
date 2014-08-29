@@ -1,0 +1,23 @@
+<div class="col-md-2">
+	<h2 class="ui dividing header">
+		{{i18n .Lang "navigation"}} 
+		<div class="sub header">{{i18n .Lang "navigation_intro"}}</div>
+	</h2>
+	<div class="ui link list">
+		<a class="item{{if .PageIsHome}} active{{end}}" href="/">{{i18n .Lang "home"}}</a>
+		<!-- <a class="item" href="/install">{{i18n .Lang "install"}}</a> -->
+		<!-- <a class="item" href="/browse">{{i18n .Lang "browse"}}</a> -->
+		<!-- <a class="item" href="/docs">{{i18n .Lang "docs"}}</a> -->
+		<a class="item" target="_blank" href="http://obahua.com">{{i18n .Lang "blog"}}</a>
+		<!-- <a class="item" href="/faqs">{{i18n .Lang "faqs"}}</a> -->
+	  	<a class="item{{if .PageIsAbout}} active{{end}}" href="/about">{{i18n .Lang "about"}}</a>
+	</div>
+
+<!-- 	<h2 class="ui dividing header">
+		{{i18n .Lang "quick_links"}} 
+		<div class="sub header">{{i18n .Lang "quick_links_intro"}}</div>
+	</h2>
+	<div class="ui link list">
+		<a class="item{{if .PageIsNewPackage}} active{{end}}" href="/package/new">{{i18n .Lang "new_package"}}</a>
+	</div> -->
+</div>

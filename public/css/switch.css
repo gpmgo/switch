@@ -1,0 +1,91 @@
+body {
+    font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+html,
+body {
+    font-size: 15px;
+}
+#registry > .segment {
+    margin: 0px 0px 3em;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #DDDDDD;
+}
+.carbonad {
+    display: block;
+    background: #fdfdfd;
+    background-image: -moz-linear-gradient(top, #f8f8f8, #fdfdfd);
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f8f8f8), color-stop(1, #fdfdfd));
+    border: 1px solid #d5d5d5;
+    font-family: Lucida Grande, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    height: 95px;
+    line-height: 15px;
+    overflow: hidden;
+    width: 260px;
+    padding-top: 15px;
+}
+#registry .userinfo .carbonad {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+#registry .userinfo .carbonad .avatar {
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    width: 64px;
+}
+.carbonad-info {
+    padding-left: 25px;
+}
+.login-panel {
+    padding-top: 15px;
+}
+.number {
+    font-size: 4em;
+    display: block;
+    line-height: 1.2;
+}
+.number > small {
+    font-size: 30%;
+}
+.stat {
+    color: #999;
+    display: block;
+    padding-left: 5px;
+    text-transform: uppercase;
+}
+.copyright {
+    text-align: center;
+    font-size: 13px;
+}
+.footer {
+    margin-top: 20px;
+    padding-top: 10px;
+    background-color: #FFF;
+    border-top: 1px solid #DDD;
+}
+.footer div {
+    text-align: center;
+}
+.markdown-body {
+    padding: 15px;
+}
+.gist-file .gist-data {
+    background-color: transparent!important;
+    font-family: Menlo;
+}
+code {
+    margin: 0px;
+    border: 1px solid #DDD;
+    background-color: #F8F8F8;
+}
+.right {
+    float: right;
+}
+#download-btn-section {
+    padding: 10px;
+}

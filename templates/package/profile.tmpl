@@ -1,0 +1,68 @@
+{{template "base/head" .}}
+<div class="container">
+	<div class="col-md-10">
+		{{with .Package}}
+		<h2 class="ui dividing header">
+			{{.FullName}}
+	    	<div class="ui label">
+	    	  	INSTALL
+	    	  	<div class="detail">{{.DownloadCount}}</div>
+	    	</div>
+			<div class="sub header">{{.Description}}</div>
+		</h2>
+		<div class="ui list">
+		  	<div class="item">
+		    	<div class="header">{{i18n $.Lang "author"}}: <img class="ui avatar image" src="{{.Owner.AvatarLink}}"><a href="/u/{{.Owner.UserName}}">{{.Owner.FullName}}</a></div>
+		  	</div>
+
+		  	<div class="item">
+		    	<div class="header">{{i18n $.Lang "package.install"}}: <code>gopm get gopm.io/{{.Owner.UserName}}/{{.Name}}</code></div>
+		  	</div>
+
+		  	{{if .Homepage}}<div class="item">
+		    	<div class="header">{{i18n $.Lang "homepage"}}: <a target="_blank" href="{{.Homepage}}">{{.Homepage}}</a></div>
+		    </div>{{end}}
+
+		  	{{if .Issues}}<div class="item">
+		    	<div class="header">{{i18n $.Lang "package.issue_link"}}: <a target="_blank" href="{{.Issues}}">{{.Issues}}</a></div>
+		    </div>{{end}}
+
+		  	{{if .Donate}}<div class="item">
+		    	<div class="header">{{i18n $.Lang "package.donate_link"}}: <a target="_blank" href="{{.Donate}}">{{.Donate}}</a></div>
+		    </div>{{end}}
+
+		  	<div class="item">
+		    	<div class="header">{{i18n $.Lang "package.created"}}: {{DateFormat .Created "M d, Y"}}</div>
+		    </div>
+
+		  	<div class="item">
+		    	<div class="header">{{i18n $.Lang "package.last_update"}}: {{DateFormat .Updated "M d, Y"}}</div>
+		    </div>
+		</div>
+		<a class="ui blue submit button" href="/{{.Owner.UserName}}/{{.Name}}/edit">{{i18n $.Lang "package.edit_profile"}}</a>
+		<h2 class="ui dividing header">
+			{{i18n $.Lang "package.releases"}}
+		</h2>
+		<div class="ui link list">
+			{{range .Releases}}
+		  	<div class="item">
+			    <div class="ui purple header">
+			    	{{.Tag}}
+			    	<div class="ui black label">
+			    	  	{{.GoVerName}}
+			    	</div>
+			    	<div class="ui label">
+			    	  	INSTALL
+			    	  	<div class="detail">{{.DownloadCount}}</div>
+			    	</div>
+			    	<a class="ui green label" href="/{{$.Package.Owner.UserName}}/{{$.Package.Name}}.zip?r={{.Tag}}">DOWNLOAD</a>
+			    </div>
+		    </div>
+		    {{end}}
+		</div>
+		<a class="ui blue submit button" href="/{{.Owner.UserName}}/{{.Name}}/releases/new">{{i18n $.Lang "package.new_release"}}</a>
+		{{end}}
+	</div>
+	{{template "base/navbar" .}}
+</div>
+{{template "base/footer" .}}

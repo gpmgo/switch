@@ -1,0 +1,15 @@
+{{template "base/head" .}}
+<div class="container">
+	<div class="col-md-10">
+		<h2 class="ui dividing header">
+			{{i18n .Lang "about_lower"}}
+		</h2>
+		{{if eq .Lang "en-US"}}
+		<script src="https://gist.github.com/Unknwon/dcfef47b757a1f6f4711.js"></script>
+		{{else}}
+		<script src="https://gist.github.com/Unknwon/4ce68d672e5139e7e5ad.js"></script>
+		{{end}}
+	</div>
+	{{template "base/navbar" .}}
+</div>
+{{template "base/footer" .}}

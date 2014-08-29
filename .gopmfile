@@ -1,0 +1,13 @@
+[target]
+path = github.com/gpmgo/gopm-registry
+
+[deps]
+github.com/Unknwon/goconfig = 
+github.com/astaxie/beego = 
+github.com/beego/i18n = 
+github.com/gogits/logs = 
+github.com/howeyc/fsnotify = 
+
+[res]
+include = templates|static|conf
+

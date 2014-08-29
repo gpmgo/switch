@@ -1,0 +1,99 @@
+{{template "base/head" .}}
+<div class="container">
+	<div class="col-md-10">
+		<h2 class="ui dividing header">
+			{{i18n .Lang "package.edit_profile"}}
+		</h2>
+		<form action="/{{.Package.Owner.UserName}}/{{.Package.Name}}/edit" method="post">
+			{{.CsrfTokenHtml}}
+			<div class="ui {{if .Flash.ErrorMsg}}error {{end}}form segment">
+				{{template "base/alert" .}}
+			  	<div class="{{if .Err_PkgName}}error{{end}} field">
+			    	<label>
+			    		{{i18n .Lang "package.pkgname"}}
+			    		<small>{{i18n .Lang "package.pkgname_intro"}}</small>
+			    	</label>
+			    	<div class="ui left labeled icon input">
+			      		<input name="pkgname" type="text" placeholder="{{i18n .Lang "package.pkgname"}}" value="{{.Package.Name}}" required>
+			      		<i class="code icon"></i>
+			      		<div class="ui corner label">
+			        		<i class="icon asterisk"></i>
+			      		</div>
+			    	</div>
+			  	</div>
+
+			  	<div class="{{if .Err_FullName}}error{{end}} field">
+			    	<label>
+			    		{{i18n .Lang "user.fullname"}}
+			    		<small>{{i18n .Lang "package.fullname_intro"}}</small>
+			    	</label>
+			    	<div class="ui left labeled icon input">
+			      		<input name="fullname" type="text" placeholder="{{i18n .Lang "user.fullname"}}" value="{{.Package.FullName}}">
+			      		<i class="code icon"></i>
+			    	</div>
+			  	</div>
+
+			  	<div class="{{if .Err_Desc}}error{{end}} field">
+			    	<label>
+			    		{{i18n .Lang "package.desc"}}
+			    	</label>
+			    	<div class="ui left labeled icon input">
+			      		<input name="desc" type="text" placeholder="{{i18n .Lang "package.desc"}}" value="{{.Package.Description}}" required>
+			      		<i class="info icon"></i>
+			      		<div class="ui corner label">
+			        		<i class="icon asterisk"></i>
+			      		</div>
+			    	</div>
+			  	</div>
+
+			  	<div class="{{if .Err_Homepage}}error{{end}} field">
+			    	<label>
+			    		{{i18n .Lang "homepage"}}
+			    	</label>
+			    	<div class="ui left labeled icon input">
+			      		<input name="homepage" type="text" placeholder="{{i18n .Lang "homepage"}}" value="{{.Package.Homepage}}">
+			      		<i class="home icon"></i>
+			    	</div>
+			  	</div>
+
+			  	<div class="{{if .Err_IssueLink}}error{{end}} field">
+			    	<label>
+			    		{{i18n .Lang "package.issue_link"}}
+			    	</label>
+			    	<div class="ui left labeled icon input">
+			      		<input name="issuelink" type="text" placeholder="{{i18n .Lang "package.issue_link"}}" value="{{.Package.Issues}}">
+			      		<i class="wrench icon"></i>
+			    	</div>
+			  	</div>
+
+			  	<div class="{{if .Err_Donate}}error{{end}} field">
+			    	<label>
+			    		{{i18n .Lang "package.donate_link"}}
+			    	</label>
+			    	<div class="ui left labeled icon input">
+			      		<input name="donate" type="text" placeholder="{{i18n .Lang "package.donate_link"}}" value="{{.Package.Donate}}">
+			      		<i class="dollar icon"></i>
+			    	</div>
+			  	</div>
+
+			  	<div class="{{if .Err_Category}}error{{end}} field">
+			  	  	<label>{{i18n .Lang "home.category"}}</label>
+			  	  	<div class="ui dropdown selection">
+				  	    <input type="hidden" name="category" value="{{.Package.CategoryName}}" required>
+				  	    <div class="default text">{{.Package.CategoryName}}</div>
+				  	    <i class="dropdown icon"></i>
+				  	    <div class="menu">
+				  	    	{{range .Categories}}
+					  	     <div class="item" data-value="{{.}}">{{.}}</div>
+					  	    {{end}}
+				  	    </div>
+			  	  	</div>
+			  	</div>
+
+			  	<button class="ui blue submit button" type="submit">{{i18n .Lang "package.create_package"}}</button>
+			</div>
+		</form>
+	</div>
+	{{template "base/navbar" .}}
+</div>
+{{template "base/footer" .}}

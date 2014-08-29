@@ -1,0 +1,7 @@
+{{if .Flash.ErrorMsg}}
+<div class="ui error message">
+    <div class="header">Action Forbidden</div>
+    <p>{{.Flash.ErrorMsg}}</p>
+</div>
+{{end}}
+{{if .Flash.SuccessMsg}}<div class="alert alert-success">{{.Flash.SuccessMsg}}</div>{{end}}

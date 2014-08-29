@@ -1,0 +1,112 @@
+{{template "base/head" .}}
+<div class="container">
+	<div class="col-md-10">
+		<h2 class="ui dividing header">
+			{{i18n .Lang "home.statistic"}}
+			<div class="sub header">{{.i18n.Tr "home.statistic_intro"}}</div>
+		</h2>
+		<div class="row">
+			<div class="col-md-4">
+				<h3 class="ui header">
+				  	<i class="archive icon"></i>
+				  	{{i18n .Lang "home.packages"}}
+				</h3>
+				<div>
+					<h1 class="number">{{.Stats.NumPackages}}</h1>
+					<p class="stat">{{i18n .Lang "home.package_num_unit"}}</p>
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<h3 class="ui header">
+				  	<i class="user icon"></i>
+				  	{{i18n .Lang "home.users"}}
+				</h3>
+				<div>
+					<h1 class="number">{{.Stats.NumUsers}}</h1> 
+					<p class="stat">{{i18n .Lang "home.user_num_unit"}}</p>
+				</div>
+			</div>
+
+			<div class="col-md-4">
+				<h3 class="ui header">
+				  	<i class="browser icon"></i>
+				  	{{i18n .Lang "home.activity"}}
+				</h3>
+				<div>
+					<h1 class="number">N/A</h1>
+					<p class="stat">{{.i18n.Tr "home.active_install_unit"}}</p>
+				</div>
+				<img src="http://img.shields.io/badge/WIN-N/A-blue.svg">
+				<img src="http://img.shields.io/badge/MAC-N/A-brightgreen.svg">
+				<img src="http://img.shields.io/badge/LINUX-N/A-green.svg">
+			</div>
+		</div>
+
+		<h2 class="ui dividing header">
+			{{i18n .Lang "home.ranking"}}
+			<div class="sub header">{{i18n .Lang "home.ranking_intro"}}</div>
+		</h2>
+		<div class="row">
+			<div class="col-md-4">
+				<h3 class="ui header">
+					<i class="rocket icon"></i>
+				  	{{i18n .Lang "home.trending"}}
+				</h3>
+				<div class="ui link list">
+					{{range .Stats.PopularPackages}}
+				  	<div class="item">
+					    <a href="/u/{{.Owner.UserName}}"><img class="ui avatar image" src="{{.Owner.AvatarLink}}"></a>
+					    <div class="content popup" title="{{.Description}}">
+					      	<div class="header"><a href="/{{.Owner.UserName}}/{{.Name}}">{{.Name}}</a></div>
+					      	{{SubStr .Description 0 30}}...
+					    </div>
+				    </div>
+					{{end}}
+				</div>
+				<!-- <a href="/browse/trending">{{i18n .Lang "home.more"}}...<i class="external url icon"></i></a> -->
+			</div>
+
+			<div class="col-md-4">
+				<h3 class="ui header">
+				  	<i class="sun icon"></i>
+				  	{{i18n .Lang "home.new"}}
+				</h3>
+				<div class="ui link list">
+					{{range .Stats.NewPackages}}
+				  	<div class="item">
+					    <a href="/u/{{.Owner.UserName}}"><img class="ui avatar image" src="{{.Owner.AvatarLink}}"></a>
+					    <div class="content popup" title="{{.Description}}">
+					      	<div class="header"><a href="/{{.Owner.UserName}}/{{.Name}}">{{.Name}}</a></div>
+					      	{{SubStr .Description 0 30}}...
+					    </div>
+				    </div>
+					{{end}}
+				</div>
+				<!-- <a href="/browse/new">{{i18n .Lang "home.more"}}...<i class="external url icon"></i></a> -->
+			</div>
+
+			<div class="col-md-4">
+				<h3 class="ui header">
+				  	<i class="flag icon"></i>
+				  	{{i18n .Lang "home.popular"}}
+				</h3>
+				<div class="ui link list">
+					{{range .Stats.PopularPackages}}
+				  	<div class="item">
+					    <a href="/u/{{.Owner.UserName}}"><img class="ui avatar image" src="{{.Owner.AvatarLink}}"></a>
+					    <div class="content popup" title="{{.Description}}">
+					      	<div class="header"><a href="/{{.Owner.UserName}}/{{.Name}}">{{.Name}}</a></div>
+					      	{{SubStr .Description 0 30}}...
+					    </div>
+				    </div>
+					{{end}}
+				</div>
+				<!-- <a href="/browse/popular">{{i18n .Lang "home.more"}}...<i class="external url icon"></i></a> -->
+			</div>
+		</div>
+	</div>
+	{{template "base/navbar" .}}
+</div>
+{{template "base/footer" .}}
+

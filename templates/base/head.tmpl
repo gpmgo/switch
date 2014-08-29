@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="shortcut icon" href="/img/favicon.png" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <meta name="author" content="Gopm - Go Package Manager" />
+		<meta name="description" content="Go Package Manager Registry Server" />
+		<meta name="keywords" content="gopm, Go, Golang, package manage, registry">
+		<meta name="_csrf" content="{{.CsrfToken}}" />
+
+		 <!-- Stylesheets -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+		<link href="/css/semantic.min.css" rel="stylesheet" />
+		<link href="/css/switch.css" rel="stylesheet" />
+
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/js/semantic.min.js"></script>
+		<script type="text/javascript" src="/js/registry.js"></script>
+
+		<title>{{if .Title}}{{.Title}} - {{end}}{{.i18n.Tr "app_desc"}}</title>
+	</head>
+	<body>
+		<div id="registry" class="Grid">
+		<noscript>Please enable JavaScript in your browser!</noscript>
+		<div class="segment">
+			<div class="container">
+		    	<div class="col-md-9">
+		      		<h1 class="ui dividing header">
+		      			{{.i18n.Tr  "app_title"}}
+		  				<div class="ui mini icon input">
+							<input id="search-box" type="text" placeholder="Search..." value="{{.SearchKeyword}}">
+							<i class="circular search icon"></i>
+						</div>
+					</h1>
+					<h4>{{.i18n.Tr "app_site_desc"}}</h4>
+		      		<p></p>
+				</div>
+				<div class="col-md-3" id="download-btn-section">
+					<a class="ui green large labeled icon button" href="/download">
+						<i class="awesome download cloud icon"></i>
+						Download
+					</a>
+				</div>
+
+				<!-- <div class="col-md-3 userinfo">
+					{{if .IsSignIn}}
+						{{with .SignInUser}}
+						<div class="carbonad">
+							<div class="col-md-4">
+								<img src="{{.AvatarLink}}" class="avatar">
+							</div>
+
+							<div class="col-md-8 carbonad-info">
+								<div class="row">
+									<h5><a href="/u/{{.UserName}}">{{.FullName}}</a></h5>
+								</div>
+
+								<div class="row">
+									<a href="/profile/edit">{{i18n $.Lang "edit_profile"}}</a> | <a href="/logout">{{i18n $.Lang "logout"}}</a>
+								</div>
+							</div>
+			  			</div>
+			  			{{end}}
+					{{else}}
+					<div class="login-panel">
+						<div class="col-md-12">
+			  				<div class="ui buttons">
+			  		  			<a href="/login" class="ui button">{{i18n .Lang "login"}}</a>
+			  		  			<div class="or"></div>
+			  		  			<a href="/signup" class="ui positive button">{{i18n .Lang "sign_up"}}</a>
+			  				</div>
+						</div>
+					</div>
+					{{end}}
+		  		</div> -->
+		  	</div>
+		</div>

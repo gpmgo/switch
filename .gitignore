@@ -1,0 +1,6 @@
+switch
+.DS_Store
+*.exe
+*.exe~
+custom/
+data/
