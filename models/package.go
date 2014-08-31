@@ -124,6 +124,7 @@ const (
 	DATABASE
 )
 
+// Package represents a Go package.
 type Package struct {
 	Id            int64
 	OwnerId       int64  `xorm:"UNIQUE(s) INDEX"`

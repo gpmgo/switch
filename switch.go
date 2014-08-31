@@ -36,7 +36,7 @@ import (
 	"github.com/gpmgo/switch/routers"
 )
 
-const APP_VER = "0.1.1.0829"
+const APP_VER = "0.1.1.0831"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())

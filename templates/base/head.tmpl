@@ -30,7 +30,7 @@
 		      		<h1 class="ui dividing header">
 		      			{{.i18n.Tr  "app_title"}}
 		  				<div class="ui mini icon input">
-							<input id="search-box" type="text" placeholder="Search..." value="{{.SearchKeyword}}">
+							<input id="search-box" type="text" placeholder="{{.i18n.Tr "home.search"}}..." value="{{.SearchKeyword}}">
 							<i class="circular search icon"></i>
 						</div>
 					</h1>
@@ -40,7 +40,7 @@
 				<div class="col-md-3" id="download-btn-section">
 					<a class="ui green large labeled icon button" href="/download">
 						<i class="awesome download cloud icon"></i>
-						Download
+						{{.i18n.Tr "home.download"}}
 					</a>
 				</div>
 

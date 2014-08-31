@@ -23,7 +23,7 @@
 				  	{{i18n .Lang "home.users"}}
 				</h3>
 				<div>
-					<h1 class="number">{{.Stats.NumUsers}}</h1> 
+					<h1 class="number">{{.Stats.NumDownloaders}}</h1> 
 					<p class="stat">{{i18n .Lang "home.user_num_unit"}}</p>
 				</div>
 			</div>
@@ -34,12 +34,12 @@
 				  	{{i18n .Lang "home.activity"}}
 				</h3>
 				<div>
-					<h1 class="number">N/A</h1>
+					<h1 class="number">{{.Stats.DownloadStats.NumTotalDownload}}</h1>
 					<p class="stat">{{.i18n.Tr "home.active_install_unit"}}</p>
 				</div>
-				<img src="http://img.shields.io/badge/WIN-N/A-blue.svg">
-				<img src="http://img.shields.io/badge/MAC-N/A-brightgreen.svg">
-				<img src="http://img.shields.io/badge/LINUX-N/A-green.svg">
+				<img src="http://img.shields.io/badge/WIN-{{.Stats.DownloadStats.NumWindows}}-blue.svg">
+				<img src="http://img.shields.io/badge/MAC-{{.Stats.DownloadStats.NumMac}}-brightgreen.svg">
+				<img src="http://img.shields.io/badge/LINUX-{{.Stats.DownloadStats.NumLinux}}-green.svg">
 			</div>
 		</div>
 
@@ -54,7 +54,7 @@
 				  	{{i18n .Lang "home.trending"}}
 				</h3>
 				<div class="ui link list">
-					{{range .Stats.PopularPackages}}
+					{{range .Stats.TrendingPackages}}
 				  	<div class="item">
 					    <a href="/u/{{.Owner.UserName}}"><img class="ui avatar image" src="{{.Owner.AvatarLink}}"></a>
 					    <div class="content popup" title="{{.Description}}">

@@ -47,19 +47,28 @@ func Ping() error {
 	return x.Ping()
 }
 
+type DownloadStats struct {
+	NumTotalDownload,
+	NumWindows, NumMac, NumLinux int64
+}
 type Stats struct {
-	NumUsers, NumPackages        int64
-	NewPackages, PopularPackages []*Package
+	NumPackages, NumDownloaders int64
+	DownloadStats
+	TrendingPackages, NewPackages, PopularPackages []*Package
 }
 
 func Statistic() *Stats {
 	s := new(Stats)
 	s.NumPackages, _ = x.Count(new(Package))
+	s.NumDownloaders, _ = x.Count(new(Downloader))
 
-	s.NewPackages = make([]*Package, 0, 10)
-	x.Limit(10).Desc("created").Find(&s.NewPackages)
+	s.TrendingPackages = make([]*Package, 0, 20)
+	x.Limit(20).Desc("recent_download").Find(&s.TrendingPackages)
 
-	s.PopularPackages = make([]*Package, 0, 10)
-	x.Limit(10).Desc("download_count").Find(&s.PopularPackages)
+	s.NewPackages = make([]*Package, 0, 20)
+	x.Limit(20).Desc("created").Find(&s.NewPackages)
+
+	s.PopularPackages = make([]*Package, 0, 20)
+	x.Limit(20).Desc("download_count").Find(&s.PopularPackages)
 	return s
 }
