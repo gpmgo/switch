@@ -4,3 +4,4 @@ switch
 *.exe~
 custom/
 data/
+public/VERSION.json

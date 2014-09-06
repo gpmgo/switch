@@ -59,9 +59,15 @@ func Download(ctx *middleware.Context) {
 		} else if err = models.IncreaseRevisionDownloadCount(r.Id); err != nil {
 			ctx.Handle(500, "IncreaseRevisionDownloadCount", err)
 		} else {
-			remoteAddr := ctx.Req.RemoteAddr
-			if i := strings.LastIndex(remoteAddr, ":"); i > -1 {
-				remoteAddr = remoteAddr[:i]
+			remoteAddr := ctx.Req.Header.Get("X-Real-IP")
+			if remoteAddr == "" {
+				remoteAddr = ctx.Req.Header.Get("X-Forwarded-For")
+				if remoteAddr == "" {
+					remoteAddr = ctx.Req.RemoteAddr
+					if i := strings.LastIndex(remoteAddr, ":"); i > -1 {
+						remoteAddr = remoteAddr[:i]
+					}
+				}
 			}
 			if err = models.AddDownloader(remoteAddr); err != nil {
 				ctx.Handle(500, "AddDownloader", err)

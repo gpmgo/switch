@@ -23,15 +23,10 @@ import (
 	"strings"
 	// "time"
 
-	"github.com/Unknwon/cae/zip"
 	"github.com/Unknwon/com"
 
 	"github.com/gpmgo/switch/modules/setting"
 )
-
-func init() {
-	zip.Verbose = false
-}
 
 var (
 	githubRevisionPattern = regexp.MustCompile(`js-selectable-text">[a-z0-9A-Z]+`)
@@ -42,7 +37,6 @@ func getGithbRevision(client *http.Client, n *Node) error {
 	if len(n.Value) == 0 {
 		n.Value = "master"
 	}
-	fmt.Println(fmt.Sprintf("https://%s/commit/%s", n.ImportPath, n.Value))
 	data, err := com.HttpGetBytes(client, fmt.Sprintf("https://%s/commit/%s", n.ImportPath, n.Value), nil)
 	if err != nil {
 		return fmt.Errorf("fail to get revision(%s): %v", n.ImportPath, err)
