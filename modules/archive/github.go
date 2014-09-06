@@ -17,11 +17,9 @@ package archive
 import (
 	"fmt"
 	"net/http"
-	// "os"
 	"path"
 	"regexp"
 	"strings"
-	// "time"
 
 	"github.com/Unknwon/com"
 
@@ -33,7 +31,7 @@ var (
 	githubPattern         = regexp.MustCompile(`^github\.com/(?P<owner>[a-z0-9A-Z_.\-]+)/(?P<repo>[a-z0-9A-Z_.\-]+)(?P<dir>/[a-z0-9A-Z_.\-/]*)?$`)
 )
 
-func getGithbRevision(client *http.Client, n *Node) error {
+func getGithubRevision(client *http.Client, n *Node) error {
 	if len(n.Value) == 0 {
 		n.Value = "master"
 	}
@@ -61,7 +59,7 @@ func getGithubArchive(client *http.Client, match map[string]string, n *Node) err
 	// Downlaod archive.
 	if err := com.HttpGetToFile(client,
 		com.Expand("https://github.com/{owner}/{repo}/archive/{sha}.zip", match), nil, n.ArchivePath); err != nil {
-		return fmt.Errorf("fail to download archive: %v", n.ImportPath, err)
+		return fmt.Errorf("fail to download archive: %s", n.ImportPath, err)
 	}
 	return nil
 }

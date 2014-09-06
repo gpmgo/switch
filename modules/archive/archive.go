@@ -90,15 +90,17 @@ var (
 	// services is the list of source code control services handled by gopm.
 	services = []*service{
 		{githubPattern, "github.com/", getGithubArchive},
-		// {googlePattern, "code.google.com/", getGooglePkg},
+		{googlePattern, "code.google.com/", getGoogleArchive},
 		// {bitbucketPattern, "bitbucket.org/", getBitbucketPkg},
 		// {oscPattern, "git.oschina.net/", getOscPkg},
 		// {gitcafePattern, "gitcafe.com/", getGitcafePkg},
 		// {launchpadPattern, "launchpad.net/", getLaunchpadPkg},
 	}
 	revServices = []*revService{
-		{"github.com/", getGithbRevision},
+		{"github.com/", getGithubRevision},
+		{"code.google.com/", getGoogleRevision},
 	}
+	defaultTags = map[string]string{"git": "master", "hg": "default", "svn": "trunk"}
 )
 
 // GetRevision fetches revision of node from service.
