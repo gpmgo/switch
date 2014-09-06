@@ -25,6 +25,7 @@ import (
 	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/cache"
 	"github.com/macaron-contrib/i18n"
+	"github.com/macaron-contrib/session"
 
 	"github.com/gpmgo/switch/modules/base"
 	"github.com/gpmgo/switch/modules/log"
@@ -35,6 +36,7 @@ type Context struct {
 	*macaron.Context
 	i18n.Locale
 	Cache cache.Cache
+	Flash *session.Flash
 }
 
 // Query querys form parameter.
@@ -70,6 +72,16 @@ func (ctx *Context) HasError() bool {
 // HTML calls Context.HTML and converts template name to string.
 func (ctx *Context) HTML(status int, name base.TplName) {
 	ctx.Context.HTML(status, string(name))
+}
+
+// RenderWithErr used for page has form validation but need to prompt error to users.
+func (ctx *Context) RenderWithErr(msg string, tpl base.TplName, form interface{}) {
+	if form != nil {
+		// auth.AssignForm(form, ctx.Data)
+	}
+	ctx.Flash.ErrorMsg = msg
+	ctx.Data["Flash"] = ctx.Flash
+	ctx.HTML(200, tpl)
 }
 
 // Handle handles and logs error by given status.
@@ -127,11 +139,12 @@ func (ctx *Context) ServeContent(name string, r io.ReadSeeker, params ...interfa
 
 // Contexter initializes a classic context for a request.
 func Contexter() macaron.Handler {
-	return func(c *macaron.Context, l i18n.Locale, cache cache.Cache) {
+	return func(c *macaron.Context, l i18n.Locale, cache cache.Cache, f *session.Flash) {
 		ctx := &Context{
 			Context: c,
 			Locale:  l,
 			Cache:   cache,
+			Flash:   f,
 		}
 		// Compute current URL for real-time change language.
 		link := ctx.Req.RequestURI

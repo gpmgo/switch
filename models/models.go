@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -37,10 +37,9 @@ func init() {
 		setting.Cfg.MustValue("database", "NAME")))
 	if err != nil {
 		log.Fatal(4, "Fail to init new engine: %v", err)
+	} else if err = x.Sync(new(Package), new(Revision), new(Downloader)); err != nil {
+		log.Fatal(4, "Fail to sync database: %v", err)
 	}
-	// else if err = x.Sync(new(User), new(Package), new(Release)); err != nil {
-	// 	log.Fatal("Fail to sync database: %v", err)
-	// }
 }
 
 func Ping() error {
@@ -48,8 +47,7 @@ func Ping() error {
 }
 
 type DownloadStats struct {
-	NumTotalDownload,
-	NumWindows, NumMac, NumLinux int64
+	NumTotalDownload int64
 }
 type Stats struct {
 	NumPackages, NumDownloaders int64
@@ -59,6 +57,11 @@ type Stats struct {
 
 func Statistic() *Stats {
 	s := new(Stats)
+	x.Iterate(new(Package), func(idx int, bean interface{}) error {
+		pkg := bean.(*Package)
+		s.NumTotalDownload += pkg.DownloadCount
+		return nil
+	})
 	s.NumPackages, _ = x.Count(new(Package))
 	s.NumDownloaders, _ = x.Count(new(Downloader))
 

@@ -130,7 +130,14 @@ var TemplateFuncs template.FuncMap = map[string]interface{}{
 		return domain
 	},
 	"SubStr": func(str string, start, length int) string {
-		return str[start : start+length]
+		if len(str) == 0 {
+			return ""
+		}
+		end := start + length
+		if len(str) < end {
+			return str
+		}
+		return str[start:end] + "..."
 	},
 	"ShortSha": ShortSha,
 	"i18n":     i18n.Tr,

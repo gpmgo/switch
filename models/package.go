@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -16,226 +16,85 @@ package models
 
 import (
 	"errors"
+	// "fmt"
 	"strings"
 	"time"
 
-	"github.com/gpmgo/switch/modules/base"
-	"github.com/gpmgo/switch/modules/log"
+	"github.com/Unknwon/com"
+
+	"github.com/gpmgo/switch/modules/archive"
 )
 
 var (
-	ErrPackageAlreadyExist = errors.New("Package already exist")
-	ErrPackageNotExist     = errors.New("Package does not exist")
-	ErrGoVersionNotExist   = errors.New("Go version does not exist")
-	ErrCategoryNotExist    = errors.New("Category does not exist")
-	ErrReleaseNotExist     = errors.New("Release does not exist")
+	ErrPackageNotExist  = errors.New("Package does not exist")
+	ErrRevisionNotExist = errors.New("Revision does not exist")
 )
 
-type PkgSource int
+type Storage int
 
 const (
-	REGISTRY PkgSource = iota + 1
+	LOCAL Storage = iota
+	QINIU
 )
 
-type GoVersion int
-
-const (
-	GO11 GoVersion = iota + 1
-	GO12
-	GO13
-)
-
-type Release struct {
-	Id            int64     `json:"id"`
-	PkgId         int64     `xorm:"UNIQUE(s) INDEX" json:"pkg_id"`
-	Tag           string    `xorm:"UNIQUE(s)" json:"tag"`
-	Source        PkgSource `json:"-"`
-	GoVer         GoVersion `xorm:"INDEX" json:"go_ver"`
-	GoVerName     string    `xorm:"-" json:"-"`
-	DownloadCount int64     `json:"download_count"`
-	IsUploaded    bool      `json:"-"` // Indicates whether uploaded to QiNiu or not.
-	Uploaded      time.Time `json:"-"`
-	Created       time.Time `xorm:"CREATED" json:"created"`
+// Revision represents a revision of a Go package.
+type Revision struct {
+	Id       int64
+	PkgId    int64  `xorm:"UNIQUE(s)"`
+	Revision string `xorm:"UNIQUE(s)"`
+	Storage
+	DownloadCount int64
 }
 
-func (r *Release) SetGoVersion(name string) error {
-	switch name {
-	case "Go 1.1":
-		r.GoVer = GO11
-	case "Go 1.2":
-		r.GoVer = GO12
-	case "Go 1.3":
-		r.GoVer = GO13
-	default:
-		return ErrGoVersionNotExist
+// GetRevision returns revision by given pakcage ID and revision.
+func GetRevision(pkgId int64, rev string) (*Revision, error) {
+	r := &Revision{
+		PkgId:    pkgId,
+		Revision: rev,
 	}
-	return nil
-}
-
-func (r *Release) GetGoVersion() {
-	switch r.GoVer {
-	case GO11:
-		r.GoVerName = "Go 1.1"
-	case GO12:
-		r.GoVerName = "Go 1.2"
-	case GO13:
-		r.GoVerName = "Go 1.3"
-	}
-}
-
-// NewRelease creates record of a new release.
-func NewRelease(pkg *Package, r *Release) (err error) {
-	sess := x.NewSession()
-	defer sess.Close()
-	if err = sess.Begin(); err != nil {
-		return err
-	}
-
-	if _, err = sess.Insert(r); err != nil {
-		sess.Rollback()
-		return err
-	}
-	pkg.ReleaseIds = base.ToStr(r.Id) + "|" + pkg.ReleaseIds
-	if _, err = sess.Id(pkg.Id).Update(pkg); err != nil {
-		sess.Rollback()
-		return err
-	}
-	return sess.Commit()
-}
-
-// GetReleaseById returns the release by given ID if exists.
-func GetReleaseById(id int64) (*Release, error) {
-	r := new(Release)
-	has, err := x.Id(id).Get(r)
+	has, err := x.Get(r)
 	if err != nil {
 		return nil, err
 	} else if !has {
-		return nil, ErrReleaseNotExist
+		return nil, ErrRevisionNotExist
 	}
 	return r, nil
 }
 
-type PkgCategory int
-
-const (
-	WEB_FRAMEWORK PkgCategory = iota + 1
-	CONFIGURATION
-	LOGGING
-	DATABASE
-)
+// IncreaseRevisionDownloadCount increase package revision download count by 1.
+func IncreaseRevisionDownloadCount(revId int64) error {
+	_, err := x.Exec("UPDATE `revision` SET download_count = download_count + 1 WHERE id = ?", revId)
+	return err
+}
 
 // Package represents a Go package.
 type Package struct {
-	Id            int64
-	OwnerId       int64  `xorm:"UNIQUE(s) INDEX"`
-	Name          string `xorm:"UNIQUE(s)"`
-	FullName      string
-	Description   string
-	Category      PkgCategory `xorm:"INDEX"`
-	CategoryName  string      `xorm:"-"`
-	ReleaseIds    string      `xorm:"TEXT"`
-	Releases      []*Release  `xorm:"-"`
-	Homepage      string
-	Issues        string
-	Donate        string
-	DownloadCount int64
-	IsPrivate     bool
-	Created       time.Time `xorm:"CREATED"`
-	Updated       time.Time `xorm:"UPDATED"`
+	Id             int64
+	ImportPath     string `xorm:"UNIQUE"`
+	Description    string
+	Homepage       string
+	Issues         string
+	DownloadCount  int64
+	RecentDownload int64
+	Created        time.Time `xorm:"CREATED"`
 }
 
-func (pkg *Package) SetCategory(name string) error {
-	switch name {
-	case "Web Frameworks":
-		pkg.Category = WEB_FRAMEWORK
-	case "Configuration File Parsers":
-		pkg.Category = CONFIGURATION
-	case "Logging":
-		pkg.Category = LOGGING
-	case "Databases and Storage":
-		pkg.Category = DATABASE
-	default:
-		return ErrCategoryNotExist
+// NewPackage creates
+func NewPackage(importPath string) (*Package, error) {
+	pkg := &Package{
+		ImportPath: importPath,
 	}
-	return nil
+	if _, err := x.Insert(pkg); err != nil {
+		return nil, err
+	}
+	return pkg, nil
 }
 
-func (pkg *Package) GetCategory() {
-	switch pkg.Category {
-	case WEB_FRAMEWORK:
-		pkg.CategoryName = "Web Frameworks"
-	case CONFIGURATION:
-		pkg.CategoryName = "Configuration File Parsers"
-	case LOGGING:
-		pkg.CategoryName = "Logging"
-	case DATABASE:
-		pkg.CategoryName = "Databases and Storage"
+// GetPakcageByPath returns a package by given import path.
+func GetPakcageByPath(importPath string) (*Package, error) {
+	pkg := &Package{
+		ImportPath: importPath,
 	}
-}
-
-func (pkg *Package) GetReleases() {
-	ids := strings.Split(pkg.ReleaseIds, "|")
-	pkg.Releases = make([]*Release, 0, len(ids))
-	for _, idStr := range ids {
-		if len(idStr) == 0 {
-			continue
-		}
-		id, _ := base.StrTo(idStr).Int64()
-		if id > 0 {
-			r, err := GetReleaseById(id)
-			if err != nil {
-				log.Error(4, "Package.GetReleases(GetReleaseById): %v", err)
-				continue
-			}
-			pkg.Releases = append(pkg.Releases, r)
-		}
-	}
-}
-
-// IsPackageNameUsed returns true if package name has been used of given user.
-func IsPackageNameUsed(uid int64, name string) (bool, error) {
-	if uid <= 0 || len(name) == 0 {
-		return false, nil
-	}
-	return x.Get(&Package{OwnerId: uid, Name: strings.ToLower(name)})
-}
-
-// NewPackage creates record of a new package.
-func NewPackage(pkg *Package) error {
-	isExist, err := IsPackageNameUsed(pkg.OwnerId, pkg.Name)
-	if err != nil {
-		return err
-	} else if isExist {
-		return ErrPackageAlreadyExist
-	}
-
-	sess := x.NewSession()
-	defer sess.Close()
-	if err = sess.Begin(); err != nil {
-		return err
-	}
-
-	pkg.Name = strings.ToLower(pkg.Name)
-	if _, err = sess.Insert(pkg); err != nil {
-		sess.Rollback()
-		return err
-	}
-
-	rawSql := "UPDATE `user` SET num_packages = num_packages + 1 WHERE id = ?"
-	if _, err = sess.Exec(rawSql, pkg.OwnerId); err != nil {
-		sess.Rollback()
-		return err
-	}
-	return sess.Commit()
-}
-
-// GetPackageByName returns package by given user and name.
-func GetPackageByName(uid int64, name string) (*Package, error) {
-	if uid <= 0 || len(name) == 0 {
-		return nil, ErrPackageNotExist
-	}
-
-	pkg := &Package{OwnerId: uid, Name: name}
 	has, err := x.Get(pkg)
 	if err != nil {
 		return nil, err
@@ -243,6 +102,66 @@ func GetPackageByName(uid int64, name string) (*Package, error) {
 		return nil, ErrPackageNotExist
 	}
 	return pkg, nil
+}
+
+// CheckPkg checks if versioned package is in records, and download it when needed.
+func CheckPkg(importPath, rev string) (*Revision, error) {
+	// Check package record.
+	pkg, err := GetPakcageByPath(importPath)
+	if err != nil && err != ErrPackageNotExist {
+		return nil, err
+	}
+
+	n := archive.NewNode(importPath, rev)
+
+	// Get and check revision record.
+	if err = n.GetRevision(); err != nil {
+		return nil, err
+	}
+
+	var r *Revision
+	if pkg != nil {
+		r, err = GetRevision(pkg.Id, n.Revision)
+		if err != nil && err != ErrRevisionNotExist {
+			return nil, err
+		}
+	}
+
+	if !com.IsFile(n.ArchivePath) {
+		if err := n.Download(); err != nil {
+			return nil, err
+		}
+	}
+
+	if pkg == nil {
+		pkg, err = NewPackage(n.ImportPath)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if r == nil {
+		r = &Revision{
+			PkgId:    pkg.Id,
+			Revision: n.Revision,
+		}
+		if _, err = x.Insert(r); err != nil {
+			return nil, err
+		}
+	}
+	return r, nil
+}
+
+// IncreasePackageDownloadCount increase package download count by 1.
+func IncreasePackageDownloadCount(importPath string) error {
+	pkg, err := GetPakcageByPath(importPath)
+	if err != nil {
+		return err
+	}
+	pkg.DownloadCount++
+	pkg.RecentDownload++
+	_, err = x.Id(pkg.Id).Update(pkg)
+	return err
 }
 
 // SearchPackages searchs packages by given keyword.
@@ -259,11 +178,4 @@ func SearchPackages(keys string) ([]*Package, error) {
 	pkgs := make([]*Package, 0, 50)
 	err := x.Limit(50).Where("name like '%" + keys + "%'").Find(&pkgs)
 	return pkgs, err
-}
-
-// UpdatePackage updates package's information.
-func UpdatePackage(pkg *Package) error {
-	pkg.Name = strings.ToLower(pkg.Name)
-	_, err := x.Id(pkg.Id).AllCols().Update(pkg)
-	return err
 }

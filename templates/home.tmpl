@@ -16,7 +16,6 @@
 					<p class="stat">{{i18n .Lang "home.package_num_unit"}}</p>
 				</div>
 			</div>
-
 			<div class="col-md-4">
 				<h3 class="ui header">
 				  	<i class="user icon"></i>
@@ -27,7 +26,6 @@
 					<p class="stat">{{i18n .Lang "home.user_num_unit"}}</p>
 				</div>
 			</div>
-
 			<div class="col-md-4">
 				<h3 class="ui header">
 				  	<i class="browser icon"></i>
@@ -37,9 +35,6 @@
 					<h1 class="number">{{.Stats.DownloadStats.NumTotalDownload}}</h1>
 					<p class="stat">{{.i18n.Tr "home.active_install_unit"}}</p>
 				</div>
-				<img src="http://img.shields.io/badge/WIN-{{.Stats.DownloadStats.NumWindows}}-blue.svg">
-				<img src="http://img.shields.io/badge/MAC-{{.Stats.DownloadStats.NumMac}}-brightgreen.svg">
-				<img src="http://img.shields.io/badge/LINUX-{{.Stats.DownloadStats.NumLinux}}-green.svg">
 			</div>
 		</div>
 
@@ -56,17 +51,18 @@
 				<div class="ui link list">
 					{{range .Stats.TrendingPackages}}
 				  	<div class="item">
-					    <a href="/u/{{.Owner.UserName}}"><img class="ui avatar image" src="{{.Owner.AvatarLink}}"></a>
 					    <div class="content popup" title="{{.Description}}">
-					      	<div class="header"><a href="/{{.Owner.UserName}}/{{.Name}}">{{.Name}}</a></div>
-					      	{{SubStr .Description 0 30}}...
+					      	<div class="header">
+					      		<a class="ui green label">{{.DownloadCount}}</a>
+					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 30}}</a>
+					      	</div>
+					      	{{SubStr .Description 0 30}}
 					    </div>
 				    </div>
 					{{end}}
 				</div>
 				<!-- <a href="/browse/trending">{{i18n .Lang "home.more"}}...<i class="external url icon"></i></a> -->
 			</div>
-
 			<div class="col-md-4">
 				<h3 class="ui header">
 				  	<i class="sun icon"></i>
@@ -75,17 +71,18 @@
 				<div class="ui link list">
 					{{range .Stats.NewPackages}}
 				  	<div class="item">
-					    <a href="/u/{{.Owner.UserName}}"><img class="ui avatar image" src="{{.Owner.AvatarLink}}"></a>
 					    <div class="content popup" title="{{.Description}}">
-					      	<div class="header"><a href="/{{.Owner.UserName}}/{{.Name}}">{{.Name}}</a></div>
-					      	{{SubStr .Description 0 30}}...
+					      	<div class="header">
+					      		<a class="ui green label">{{.DownloadCount}}</a>
+					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 30}}</a>
+					      	</div>
+					      	{{SubStr .Description 0 30}}
 					    </div>
 				    </div>
 					{{end}}
 				</div>
 				<!-- <a href="/browse/new">{{i18n .Lang "home.more"}}...<i class="external url icon"></i></a> -->
 			</div>
-
 			<div class="col-md-4">
 				<h3 class="ui header">
 				  	<i class="flag icon"></i>
@@ -94,10 +91,12 @@
 				<div class="ui link list">
 					{{range .Stats.PopularPackages}}
 				  	<div class="item">
-					    <a href="/u/{{.Owner.UserName}}"><img class="ui avatar image" src="{{.Owner.AvatarLink}}"></a>
 					    <div class="content popup" title="{{.Description}}">
-					      	<div class="header"><a href="/{{.Owner.UserName}}/{{.Name}}">{{.Name}}</a></div>
-					      	{{SubStr .Description 0 30}}...
+					      	<div class="header">
+					      		<a class="ui green label">{{.DownloadCount}}</a>
+					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 30}}</a>
+					      	</div>
+					      	{{SubStr .Description 0 30}}
 					    </div>
 				    </div>
 					{{end}}

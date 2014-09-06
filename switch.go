@@ -26,6 +26,7 @@ import (
 	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/cache"
 	"github.com/macaron-contrib/i18n"
+	"github.com/macaron-contrib/session"
 	"github.com/macaron-contrib/toolbox"
 
 	"github.com/gpmgo/switch/models"
@@ -36,7 +37,7 @@ import (
 	"github.com/gpmgo/switch/routers"
 )
 
-const APP_VER = "0.1.1.0831"
+const APP_VER = "0.2.0.0906"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -71,6 +72,10 @@ func newMacaron() *macaron.Macaron {
 		Interval: setting.CacheInternal,
 		Conn:     setting.CacheConn,
 	}))
+	m.Use(session.Sessioner(session.Options{
+		Provider: setting.SessionProvider,
+		Config:   *setting.SessionConfig,
+	}))
 	m.Use(toolbox.Toolboxer(m, toolbox.Options{
 		HealthCheckFuncs: []*toolbox.HealthCheckFuncDesc{
 			&toolbox.HealthCheckFuncDesc{
@@ -91,9 +96,9 @@ func main() {
 
 	// Routers.
 	m.Get("/", routers.Home)
-	m.Get("/download")
-	m.Get("/search", routers.Search)
-	m.Get("/about", routers.About)
+	m.Get("/download", routers.Download)
+	// m.Get("/search", routers.Search)
+	// m.Get("/about", routers.About)
 
 	// Not found handler.
 	m.NotFound(routers.NotFound)

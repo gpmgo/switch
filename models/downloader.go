@@ -16,4 +16,21 @@ package models
 
 // Downloader represents a package download IP.
 type Downloader struct {
+	Id         int64
+	RemoteAddr string `xorm:"UNIQUE"`
+}
+
+// AddDownloader adds new downloader if it's not exist.
+func AddDownloader(remoteAddr string) error {
+	d := &Downloader{
+		RemoteAddr: remoteAddr,
+	}
+	has, err := x.Get(d)
+	if err != nil {
+		return err
+	} else if has {
+		return nil
+	}
+	_, err = x.Insert(d)
+	return err
 }
