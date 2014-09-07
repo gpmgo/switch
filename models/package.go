@@ -127,6 +127,8 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 		}
 	}
 
+	// return nil, fmt.Errorf("Revision: %s", n.Revision)
+
 	if !com.IsFile(n.ArchivePath) {
 		if err := n.Download(); err != nil {
 			return nil, err

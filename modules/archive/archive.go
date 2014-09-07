@@ -91,7 +91,7 @@ var (
 	services = []*service{
 		{githubPattern, "github.com/", getGithubArchive},
 		{googlePattern, "code.google.com/", getGoogleArchive},
-		// {bitbucketPattern, "bitbucket.org/", getBitbucketPkg},
+		{bitbucketPattern, "bitbucket.org/", getBitbucketArchive},
 		// {oscPattern, "git.oschina.net/", getOscPkg},
 		// {gitcafePattern, "gitcafe.com/", getGitcafePkg},
 		// {launchpadPattern, "launchpad.net/", getLaunchpadPkg},
@@ -99,6 +99,7 @@ var (
 	revServices = []*revService{
 		{"github.com/", getGithubRevision},
 		{"code.google.com/", getGoogleRevision},
+		{"bitbucket.org/", getBitbucketRevision},
 	}
 	defaultTags = map[string]string{"git": "master", "hg": "default", "svn": "trunk"}
 )

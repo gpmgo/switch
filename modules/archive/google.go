@@ -29,8 +29,6 @@ import (
 var (
 	googleRevisionPattern = regexp.MustCompile(`_setViewedRevision\('[a-z0-9A-Z]+`)
 	googleRepoRe          = regexp.MustCompile(`id="checkoutcmd">(hg|git|svn)`)
-	googleFileRe          = regexp.MustCompile(`<li><a href="([^"/]+)"`)
-	googleDirRe           = regexp.MustCompile(`<li><a href="([^".]+)"`)
 	googlePattern         = regexp.MustCompile(`^code\.google\.com/p/(?P<repo>[a-z0-9\-]+)(:?\.(?P<subrepo>[a-z0-9\-]+))?(?P<dir>/[a-z0-9A-Z_.\-/]+)?$`)
 )
 
