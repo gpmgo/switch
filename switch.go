@@ -35,9 +35,10 @@ import (
 	"github.com/gpmgo/switch/modules/middleware"
 	"github.com/gpmgo/switch/modules/setting"
 	"github.com/gpmgo/switch/routers"
+	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.2.2.0907"
+const APP_VER = "0.2.3.0911"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -99,6 +100,13 @@ func main() {
 	m.Get("/download", routers.Download)
 	// m.Get("/search", routers.Search)
 	// m.Get("/about", routers.About)
+
+	// API routers.
+	m.Group("/api", func(_ *macaron.Router) {
+		m.Group("/v1", func(r *macaron.Router) {
+			r.Get("/download", v1.Download)
+		})
+	})
 
 	// Not found handler.
 	m.NotFound(routers.NotFound)

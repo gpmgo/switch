@@ -45,14 +45,6 @@ func Download(ctx *middleware.Context) {
 			return
 		}
 
-		ext := archive.GetExtension(importPath)
-		serveName := path.Base(importPath) + "-" + base.ShortSha(r.Revision) + ext
-		switch r.Storage {
-		case models.LOCAL:
-			ctx.ServeFile(path.Join(setting.ArchivePath, importPath, r.Revision+ext), serveName)
-		case models.QINIU:
-		}
-
 		if err = models.IncreasePackageDownloadCount(importPath); err != nil {
 			ctx.Handle(500, "IncreasePackageDownloadCount", err)
 		} else if err = models.IncreaseRevisionDownloadCount(r.Id); err != nil {
@@ -61,6 +53,14 @@ func Download(ctx *middleware.Context) {
 			if err = models.AddDownloader(ctx.RemoteAddr()); err != nil {
 				ctx.Handle(500, "AddDownloader", err)
 			}
+		}
+
+		ext := archive.GetExtension(importPath)
+		serveName := path.Base(importPath) + "-" + base.ShortSha(r.Revision) + ext
+		switch r.Storage {
+		case models.LOCAL:
+			ctx.ServeFile(path.Join(setting.ArchivePath, importPath, r.Revision+ext), serveName)
+		case models.QINIU:
 		}
 		return
 	}
