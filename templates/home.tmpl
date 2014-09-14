@@ -51,10 +51,10 @@
 				<div class="ui link list">
 					{{range .Stats.TrendingPackages}}
 				  	<div class="item">
-					    <div class="content popup" title="{{.Description}}">
+					    <div class="content popup" data-content="{{.ImportPath}}">
 					      	<div class="header">
 					      		<span class="ui green label">{{.DownloadCount}}</span>
-					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 28}}</a>
+					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
 					      	</div>
 					      	{{SubStr .Description 0 30}}
 					    </div>
@@ -71,10 +71,10 @@
 				<div class="ui link list">
 					{{range .Stats.NewPackages}}
 				  	<div class="item">
-					    <div class="content popup" title="{{.Description}}">
+					    <div class="content popup" data-content="{{.ImportPath}}">
 					      	<div class="header">
 					      		<span class="ui green label">{{.DownloadCount}}</span>
-					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 28}}</a>
+					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
 					      	</div>
 					      	{{SubStr .Description 0 30}}
 					    </div>
@@ -91,10 +91,10 @@
 				<div class="ui link list">
 					{{range .Stats.PopularPackages}}
 				  	<div class="item">
-					    <div class="content popup" title="{{.Description}}">
+					    <div class="content popup" data-content="{{.ImportPath}}">
 					      	<div class="header">
 					      		<span class="ui green label">{{.DownloadCount}}</span>
-					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 28}}</a>
+					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
 					      	</div>
 					      	{{SubStr .Description 0 30}}
 					    </div>

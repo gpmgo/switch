@@ -15,7 +15,6 @@
 package routers
 
 import (
-	// "fmt"
 	"path"
 
 	"github.com/gpmgo/switch/models"

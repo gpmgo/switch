@@ -65,13 +65,13 @@ func Statistic() *Stats {
 	s.NumPackages, _ = x.Count(new(Package))
 	s.NumDownloaders, _ = x.Count(new(Downloader))
 
-	s.TrendingPackages = make([]*Package, 0, 20)
-	x.Limit(20).Desc("recent_download").Find(&s.TrendingPackages)
+	s.TrendingPackages = make([]*Package, 0, 15)
+	x.Limit(15).Desc("recent_download").Find(&s.TrendingPackages)
 
-	s.NewPackages = make([]*Package, 0, 20)
-	x.Limit(20).Desc("created").Find(&s.NewPackages)
+	s.NewPackages = make([]*Package, 0, 15)
+	x.Limit(15).Desc("created").Find(&s.NewPackages)
 
-	s.PopularPackages = make([]*Package, 0, 20)
-	x.Limit(20).Desc("download_count").Find(&s.PopularPackages)
+	s.PopularPackages = make([]*Package, 0, 15)
+	x.Limit(15).Desc("download_count").Find(&s.PopularPackages)
 	return s
 }
