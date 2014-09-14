@@ -84,6 +84,7 @@ var (
 		"bitbucket.org/":   ".zip",
 		"git.oschina.net/": ".zip",
 		"gitcafe.com/":     ".tar",
+		"gopkg.in/":        ".zip",
 		"launchpad.net/":   ".tar.gz",
 	}
 	GithubCredentials string

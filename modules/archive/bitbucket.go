@@ -61,7 +61,7 @@ func getBitbucketArchive(client *http.Client, match map[string]string, n *Node) 
 	// Downlaod archive.
 	if err := com.HttpGetToFile(client,
 		com.Expand("https://bitbucket.org/{owner}/{repo}/get/{sha}.zip", match), nil, n.ArchivePath); err != nil {
-		return fmt.Errorf("fail to download archive: %s", n.ImportPath, err)
+		return fmt.Errorf("fail to download archive(%s): %v", n.ImportPath, err)
 	}
 	return nil
 }

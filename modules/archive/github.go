@@ -59,7 +59,7 @@ func getGithubArchive(client *http.Client, match map[string]string, n *Node) err
 	// Downlaod archive.
 	if err := com.HttpGetToFile(client,
 		com.Expand("https://github.com/{owner}/{repo}/archive/{sha}.zip", match), nil, n.ArchivePath); err != nil {
-		return fmt.Errorf("fail to download archive: %s", n.ImportPath, err)
+		return fmt.Errorf("fail to download archive(%s): %v", n.ImportPath, err)
 	}
 	return nil
 }

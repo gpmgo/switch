@@ -95,11 +95,13 @@ var (
 		// {oscPattern, "git.oschina.net/", getOscPkg},
 		// {gitcafePattern, "gitcafe.com/", getGitcafePkg},
 		// {launchpadPattern, "launchpad.net/", getLaunchpadPkg},
+		{gopkgPattern, "gopkg.in/", getGopkgArchive},
 	}
 	revServices = []*revService{
 		{"github.com/", getGithubRevision},
 		{"code.google.com/", getGoogleRevision},
 		{"bitbucket.org/", getBitbucketRevision},
+		{"gopkg.in/", getGopkgRevision},
 	}
 	defaultTags = map[string]string{"git": "master", "hg": "default", "svn": "trunk"}
 )
