@@ -21,6 +21,7 @@ import (
 
 	"github.com/Unknwon/com"
 	"github.com/Unknwon/goconfig"
+	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/session"
 
 	"github.com/gpmgo/switch/modules/log"
@@ -137,6 +138,10 @@ func init() {
 	AppName = Cfg.MustValue("", "APP_NAME")
 	AppLogo = Cfg.MustValue("", "APP_LOGO", "img/favicon.png")
 	AppUrl = Cfg.MustValue("server", "ROOT_URL", "http://localhost:8084")
+
+	if Cfg.MustValue("", "RUN_MODE", "dev") == "prod" {
+		macaron.Env = macaron.PROD
+	}
 
 	Protocol = HTTP
 	if Cfg.MustValue("server", "PROTOCOL") == "https" {

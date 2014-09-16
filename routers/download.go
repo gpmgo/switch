@@ -26,8 +26,8 @@ import (
 
 func Download(ctx *middleware.Context) {
 	ctx.Data["Title"] = ctx.Tr("download")
-	importPath := archive.GetRootPath(ctx.Query("pkgname"))
-	if len(importPath) > 0 {
+	if ctx.Req.Method == "POST" {
+		importPath := archive.GetRootPath(ctx.Query("pkgname"))
 		rev := ctx.Query("revision")
 		r, err := models.CheckPkg(importPath, rev)
 		if err != nil {

@@ -5,7 +5,7 @@
 			{{.i18n.Tr "download.download"}}
 			<div class="sub header">{{.i18n.Tr "download.download_helper"}}</div>
 		</h2>
-		<form action="/download">
+		<form action="/download" method="post">
 			<div class="ui {{if .Flash.ErrorMsg}}error {{end}}form segment">
 				{{template "base/alert" .}}
 			  	<div class="{{if .Err_PkgName}}error{{end}} field">

@@ -22,6 +22,7 @@ import (
 	"html/template"
 	"net/http"
 	"runtime"
+	"strings"
 
 	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/cache"
@@ -38,7 +39,7 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.2.5.0914"
+const APP_VER = "0.2.7.0915"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -91,13 +92,14 @@ func newMacaron() *macaron.Macaron {
 
 func main() {
 	log.Info("%s %s", setting.AppName, APP_VER)
+	log.Info("Run Mode: %s", strings.Title(macaron.Env))
 	setting.NewServices()
 
 	m := newMacaron()
 
 	// Routers.
 	m.Get("/", routers.Home)
-	m.Get("/download", routers.Download)
+	m.Route("/download", "GET,POST", routers.Download)
 	// m.Get("/search", routers.Search)
 	// m.Get("/about", routers.About)
 
@@ -109,6 +111,13 @@ func main() {
 		m.Group("/v1", func(r *macaron.Router) {
 			r.Get("/download", v1.Download)
 		})
+	})
+
+	// Robots.txt
+	m.Get("/robots.txt", func() string {
+		return `User-agent: *
+Disallow: /api/
+Disallow: /download`
 	})
 
 	// Not found handler.

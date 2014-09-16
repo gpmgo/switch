@@ -17,6 +17,7 @@ package archive
 import (
 	"errors"
 	"net/http"
+	"path"
 	"regexp"
 	"strings"
 
@@ -50,6 +51,19 @@ func GetRootPath(name string) string {
 		if strings.HasPrefix(name, prefix) {
 			return joinPath(name, num)
 		}
+	}
+
+	if strings.HasPrefix(name, "gopkg.in") {
+		m := gopkgPathPattern.FindStringSubmatch(strings.TrimPrefix(name, "gopkg.in"))
+		if m == nil {
+			return name
+		}
+		user := m[1]
+		repo := m[2]
+		if len(user) == 0 {
+			user = "go-" + repo
+		}
+		return path.Join("gopkg.in", user, repo+m[3])
 	}
 	return name
 }
