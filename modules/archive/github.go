@@ -15,6 +15,7 @@
 package archive
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"path"
@@ -27,7 +28,7 @@ import (
 )
 
 var (
-	githubRevisionPattern = regexp.MustCompile(`js-selectable-text">[a-z0-9A-Z]+`)
+	githubRevisionPattern = regexp.MustCompile(`data-clipboard-text="[a-z0-9A-Z]+`)
 	githubPattern         = regexp.MustCompile(`^github\.com/(?P<owner>[a-z0-9A-Z_.\-]+)/(?P<repo>[a-z0-9A-Z_.\-]+)(?P<dir>/[a-z0-9A-Z_.\-/]*)?$`)
 )
 
@@ -35,15 +36,21 @@ func getGithubRevision(client *http.Client, n *Node) error {
 	if len(n.Value) == 0 {
 		n.Value = "master"
 	}
-	data, err := com.HttpGetBytes(client, fmt.Sprintf("https://%s/commit/%s", n.ImportPath, n.Value), nil)
+	data, err := com.HttpGetBytes(client, fmt.Sprintf("https://%s/commits/%s", n.ImportPath, n.Value), nil)
 	if err != nil {
 		return fmt.Errorf("fail to get revision(%s): %v", n.ImportPath, err)
 	}
+
+	i := bytes.Index(data, []byte(`button-outline`))
+	if i == -1 {
+		return fmt.Errorf("cannot find locater in page: %s", n.ImportPath)
+	}
+	data = data[i+1:]
 	m := githubRevisionPattern.FindSubmatch(data)
 	if m == nil {
 		return fmt.Errorf("cannot find revision in page: %s", n.ImportPath)
 	}
-	n.Revision = strings.TrimPrefix(string(m[0]), `js-selectable-text">`)
+	n.Revision = strings.TrimPrefix(string(m[0]), `data-clipboard-text="`)
 	n.ArchivePath = path.Join(setting.ArchivePath, n.ImportPath, n.Revision+".zip")
 	return nil
 }
