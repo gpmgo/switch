@@ -67,6 +67,12 @@ func UpdateRevision(rev *Revision) error {
 	return err
 }
 
+// DeleteRevisionById delete revision by given ID.
+func DeleteRevisionById(revId int64) error {
+	_, err := x.Id(revId).Delete(new(Revision))
+	return err
+}
+
 // GetLocalRevisions returns all revisions that archives are saved locally.
 func GetLocalRevisions() ([]*Revision, error) {
 	revs := make([]*Revision, 0, 10)
@@ -154,7 +160,7 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 
 	// return nil, fmt.Errorf("Revision: %s", n.Revision)
 
-	if !com.IsFile(n.ArchivePath) {
+	if r == nil || (r.Storage == LOCAL && !com.IsFile(n.ArchivePath)) {
 		if err := n.Download(); err != nil {
 			return nil, err
 		}

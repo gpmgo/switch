@@ -55,7 +55,8 @@ func UploadArchives() {
 		fpath := path.Join(setting.ArchivePath, localPath+".zip")
 
 		if !com.IsFile(fpath) {
-			log.Debug("Skip: %v", fpath)
+			log.Debug("Delete: %v", fpath)
+			models.DeleteRevisionById(rev.Id)
 			continue
 		}
 
