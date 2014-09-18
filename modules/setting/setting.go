@@ -165,6 +165,7 @@ func init() {
 	GithubCredentials = "client_id=" + Cfg.MustValue("github", "CLIENT_ID") +
 		"&client_secret=" + Cfg.MustValue("github", "CLIENT_SECRET")
 
+	conf.UP_HOST = Cfg.MustValue("qiniu", "UP_HOST", conf.UP_HOST)
 	BucketName = Cfg.MustValue("qiniu", "BUCKET_NAME")
 	BucketUrl = Cfg.MustValue("qiniu", "BUCKET_URL")
 	conf.ACCESS_KEY = Cfg.MustValue("qiniu", "ACCESS_KEY")
