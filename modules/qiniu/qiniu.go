@@ -55,6 +55,7 @@ func UploadArchives() {
 		fpath := path.Join(setting.ArchivePath, localPath+".zip")
 
 		if !com.IsFile(fpath) {
+			log.Debug("Skip: %v", fpath)
 			continue
 		}
 
@@ -75,7 +76,7 @@ func UploadArchives() {
 			continue
 		}
 
-		log.Debug("Uploading archives: %s", localPath)
+		log.Debug("Uploading: %s", localPath)
 		if err := io.PutFile(nil, nil, uptoken, key, fpath, nil); err != nil {
 			log.Error(5, "Fail to upload file(%s): %v", fpath, err)
 			continue
@@ -86,5 +87,6 @@ func UploadArchives() {
 			continue
 		}
 		os.Remove(fpath)
+		log.Debug("Uploaded: %s", localPath)
 	}
 }
