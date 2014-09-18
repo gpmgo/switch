@@ -34,12 +34,13 @@ import (
 	"github.com/gpmgo/switch/modules/base"
 	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/middleware"
+	_ "github.com/gpmgo/switch/modules/qiniu"
 	"github.com/gpmgo/switch/modules/setting"
 	"github.com/gpmgo/switch/routers"
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.2.8.0917"
+const APP_VER = "0.3.0.0917"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())

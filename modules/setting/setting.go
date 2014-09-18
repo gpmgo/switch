@@ -23,6 +23,7 @@ import (
 	"github.com/Unknwon/goconfig"
 	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/session"
+	"github.com/qiniu/api/conf"
 
 	"github.com/gpmgo/switch/modules/log"
 )
@@ -90,6 +91,10 @@ var (
 	}
 	GithubCredentials string
 
+	// QiNiu settings.
+	BucketName string
+	BucketUrl  string
+
 	// I18n settings.
 	Langs, Names []string
 )
@@ -141,6 +146,7 @@ func init() {
 
 	if Cfg.MustValue("", "RUN_MODE", "dev") == "prod" {
 		macaron.Env = macaron.PROD
+		ProdMode = true
 	}
 
 	Protocol = HTTP
@@ -158,6 +164,11 @@ func init() {
 
 	GithubCredentials = "client_id=" + Cfg.MustValue("github", "CLIENT_ID") +
 		"&client_secret=" + Cfg.MustValue("github", "CLIENT_SECRET")
+
+	BucketName = Cfg.MustValue("qiniu", "BUCKET_NAME")
+	BucketUrl = Cfg.MustValue("qiniu", "BUCKET_URL")
+	conf.ACCESS_KEY = Cfg.MustValue("qiniu", "ACCESS_KEY")
+	conf.SECRET_KEY = Cfg.MustValue("qiniu", "SECRET_KEY")
 
 	Langs = Cfg.MustValueArray("i18n", "LANGS", ",")
 	Names = Cfg.MustValueArray("i18n", "NAMES", ",")

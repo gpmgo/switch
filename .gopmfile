@@ -8,11 +8,12 @@ github.com/Unknwon/i18n =
 github.com/Unknwon/macaron = 
 github.com/go-sql-driver/mysql = 
 github.com/go-xorm/xorm = 
-github.com/gogits/gfm = 
 github.com/macaron-contrib/cache = 
 github.com/macaron-contrib/i18n = 
+github.com/macaron-contrib/session = 
 github.com/macaron-contrib/toolbox = 
-gopkg.in/fsnotify.v1 = 
+github.com/qiniu/api = 
+gopkg.in/go-fsnotify/fsnotifyv1 = 
 
 [res]
 include = templates|public|conf

@@ -61,6 +61,19 @@ func GetRevision(pkgId int64, rev string) (*Revision, error) {
 	return r, nil
 }
 
+// UpdateRevision updates revision information.
+func UpdateRevision(rev *Revision) error {
+	_, err := x.Id(rev.Id).Update(rev)
+	return err
+}
+
+// GetLocalRevisions returns all revisions that archives are saved locally.
+func GetLocalRevisions() ([]*Revision, error) {
+	revs := make([]*Revision, 0, 10)
+	err := x.Where("storage=0").Find(&revs)
+	return revs, err
+}
+
 // IncreaseRevisionDownloadCount increase package revision download count by 1.
 func IncreaseRevisionDownloadCount(revId int64) error {
 	_, err := x.Exec("UPDATE `revision` SET download_count = download_count + 1 WHERE id = ?", revId)
@@ -86,6 +99,18 @@ func NewPackage(importPath string) (*Package, error) {
 	}
 	if _, err := x.Insert(pkg); err != nil {
 		return nil, err
+	}
+	return pkg, nil
+}
+
+// GetPakcageById returns a package by given ID.
+func GetPakcageById(pkgId int64) (*Package, error) {
+	pkg := &Package{}
+	has, err := x.Id(pkgId).Get(pkg)
+	if err != nil {
+		return nil, err
+	} else if !has {
+		return nil, ErrPackageNotExist
 	}
 	return pkg, nil
 }
