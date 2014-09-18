@@ -3,6 +3,7 @@ package qiniu
 import (
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/Unknwon/com"
@@ -79,8 +80,10 @@ func UploadArchives() {
 
 		log.Debug("Uploading: %s", localPath)
 		if err := io.PutFile(nil, nil, uptoken, key, fpath, nil); err != nil {
-			log.Error(5, "Fail to upload file(%s): %v", fpath, err)
-			continue
+			if !strings.Contains(err.Error(), `"code":614}`) {
+				log.Error(5, "Fail to upload file(%s): %v", fpath, err)
+				continue
+			}
 		}
 		rev.Storage = models.QINIU
 		if err := models.UpdateRevision(rev); err != nil {
