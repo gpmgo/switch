@@ -40,7 +40,7 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.3.0.0918"
+const APP_VER = "0.3.1.0924"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -107,6 +107,8 @@ func main() {
 	// Documentation routers.
 	m.Get("/docs/*", routers.Docs)
 
+	// Package routers.
+
 	// API routers.
 	m.Group("/api", func(_ *macaron.Router) {
 		m.Group("/v1", func(r *macaron.Router) {
@@ -135,7 +137,6 @@ Disallow: /download`
 	default:
 		log.Fatal(4, "Invalid protocol: %s", setting.Protocol)
 	}
-
 	if err != nil {
 		log.Fatal(4, "Fail to start server: %v", err)
 	}

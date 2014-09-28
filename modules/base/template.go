@@ -1,4 +1,4 @@
-// Copyright 2014 Unknown
+// Copyright 2014 Unknwon
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -15,7 +15,6 @@
 package base
 
 import (
-	"container/list"
 	"html/template"
 	"path/filepath"
 	"runtime"
@@ -70,28 +69,11 @@ func Range(l int) []int {
 	return make([]int, l)
 }
 
-func List(l *list.List) chan interface{} {
-	e := l.Front()
-	c := make(chan interface{})
-	go func() {
-		for e != nil {
-			c <- e.Value
-			e = e.Next()
-		}
-		close(c)
-	}()
-	return c
-}
-
 func ShortSha(sha1 string) string {
 	if len(sha1) == 40 {
 		return sha1[:10]
 	}
 	return sha1
-}
-
-var mailDomains = map[string]string{
-	"gmail.com": "gmail.com",
 }
 
 var TemplateFuncs template.FuncMap = map[string]interface{}{
@@ -116,19 +98,6 @@ var TemplateFuncs template.FuncMap = map[string]interface{}{
 		return a + b
 	},
 	"DateFormat": DateFormat,
-	"List":       List,
-	"Mail2Domain": func(mail string) string {
-		if !strings.Contains(mail, "@") {
-			return "try.gogits.org"
-		}
-
-		suffix := strings.SplitN(mail, "@", 2)[1]
-		domain, ok := mailDomains[suffix]
-		if !ok {
-			return "mail." + suffix
-		}
-		return domain
-	},
 	"SubStr": func(str string, start, length int) string {
 		if len(str) == 0 {
 			return ""

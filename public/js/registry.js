@@ -5,5 +5,8 @@ $(document).ready(
 				window.location.href = '/search?q=' + $('#search-box').val();
 			}
 		});
+		
+		$('.ui.dropdown').dropdown();
+		$('.content.popup').popup();
 	}
 )
