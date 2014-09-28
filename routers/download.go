@@ -46,12 +46,10 @@ func Download(ctx *middleware.Context) {
 
 		if err = models.IncreasePackageDownloadCount(importPath); err != nil {
 			ctx.Handle(500, "IncreasePackageDownloadCount", err)
-		} else if err = models.IncreaseRevisionDownloadCount(r.Id); err != nil {
-			ctx.Handle(500, "IncreaseRevisionDownloadCount", err)
-		} else {
-			if err = models.AddDownloader(ctx.RemoteAddr()); err != nil {
-				ctx.Handle(500, "AddDownloader", err)
-			}
+			return
+		} else if err = models.AddDownloader(ctx.RemoteAddr()); err != nil {
+			ctx.Handle(500, "AddDownloader", err)
+			return
 		}
 
 		ext := archive.GetExtension(importPath)

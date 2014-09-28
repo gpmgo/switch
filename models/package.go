@@ -43,7 +43,6 @@ type Revision struct {
 	PkgId    int64  `xorm:"UNIQUE(s)"`
 	Revision string `xorm:"UNIQUE(s)"`
 	Storage
-	DownloadCount int64
 }
 
 // GetRevision returns revision by given pakcage ID and revision.
@@ -78,12 +77,6 @@ func GetLocalRevisions() ([]*Revision, error) {
 	revs := make([]*Revision, 0, 10)
 	err := x.Where("storage=0").Find(&revs)
 	return revs, err
-}
-
-// IncreaseRevisionDownloadCount increase package revision download count by 1.
-func IncreaseRevisionDownloadCount(revId int64) error {
-	_, err := x.Exec("UPDATE `revision` SET download_count = download_count + 1 WHERE id = ?", revId)
-	return err
 }
 
 // Package represents a Go package.

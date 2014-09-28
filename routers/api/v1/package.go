@@ -47,18 +47,11 @@ func Download(ctx *middleware.Context) {
 			"error": err.Error(),
 		})
 		return
-	} else if err = models.IncreaseRevisionDownloadCount(r.Id); err != nil {
+	} else if err = models.AddDownloader(ctx.RemoteAddr()); err != nil {
 		ctx.JSON(500, map[string]interface{}{
 			"error": err.Error(),
 		})
 		return
-	} else {
-		if err = models.AddDownloader(ctx.RemoteAddr()); err != nil {
-			ctx.JSON(500, map[string]interface{}{
-				"error": err.Error(),
-			})
-			return
-		}
 	}
 
 	ext := archive.GetExtension(importPath)
