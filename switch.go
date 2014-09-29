@@ -40,7 +40,7 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.3.1.0928"
+const APP_VER = "0.3.2.0928"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -111,8 +111,11 @@ func main() {
 
 	// API routers.
 	m.Group("/api", func(_ *macaron.Router) {
-		m.Group("/v1", func(r *macaron.Router) {
-			r.Get("/download", v1.Download)
+		m.Group("/v1", func(_ *macaron.Router) {
+			m.Group("", func(r *macaron.Router) {
+				r.Get("/download", v1.Download)
+				r.Get("/revision", v1.GetRevision)
+			}, v1.PackageFilter())
 		})
 	})
 

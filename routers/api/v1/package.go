@@ -17,6 +17,8 @@ package v1
 import (
 	"path"
 
+	"github.com/Unknwon/macaron"
+
 	"github.com/gpmgo/switch/models"
 	"github.com/gpmgo/switch/modules/archive"
 	"github.com/gpmgo/switch/modules/base"
@@ -24,15 +26,19 @@ import (
 	"github.com/gpmgo/switch/modules/setting"
 )
 
+func PackageFilter() macaron.Handler {
+	return func(ctx *middleware.Context) {
+		if len(ctx.Query("pkgname")) == 0 {
+			ctx.JSON(404, map[string]interface{}{
+				"error": "resource not found",
+			})
+			return
+		}
+	}
+}
+
 func Download(ctx *middleware.Context) {
 	importPath := archive.GetRootPath(ctx.Query("pkgname"))
-	if len(importPath) == 0 {
-		ctx.JSON(404, map[string]interface{}{
-			"error": "resource not found",
-		})
-		return
-	}
-
 	rev := ctx.Query("revision")
 	r, err := models.CheckPkg(importPath, rev)
 	if err != nil {
@@ -62,4 +68,19 @@ func Download(ctx *middleware.Context) {
 	case models.QINIU:
 		ctx.Redirect("http://" + setting.BucketUrl + "/" + importPath + "-" + r.Revision)
 	}
+}
+
+func GetRevision(ctx *middleware.Context) {
+	importPath := archive.GetRootPath(ctx.Query("pkgname"))
+	rev := ctx.Query("revision")
+	n := archive.NewNode(importPath, rev)
+	if err := n.GetRevision(); err != nil {
+		ctx.JSON(422, map[string]interface{}{
+			"error": err.Error(),
+		})
+		return
+	}
+	ctx.JSON(200, map[string]interface{}{
+		"sha": n.Revision,
+	})
 }
