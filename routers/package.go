@@ -23,6 +23,16 @@ import (
 
 func Package(ctx *middleware.Context) {
 	importPath := ctx.Params("*")
+	_, err := models.GetPakcageByPath(importPath)
+	if err != nil {
+		if err == models.ErrPackageNotExist {
+			ctx.Handle(404, "Package", nil)
+		} else {
+			ctx.Handle(500, "Package", err)
+		}
+		return
+	}
+
 	ctx.Data["Title"] = importPath
 	ctx.Data["ImportPath"] = importPath
 	ctx.HTML(200, "package")
