@@ -91,6 +91,6 @@ func UploadArchives() {
 			continue
 		}
 		os.Remove(fpath)
-		log.Debug("Uploaded: %s", localPath)
+		log.Info("Uploaded: %s", localPath)
 	}
 }
