@@ -8,5 +8,9 @@ $(document).ready(
 		
 		$('.ui.dropdown').dropdown();
 		$('.content.popup').popup();
+
+		$(".click-select").click(function(){
+			$(this).select();
+		});
 	}
 )

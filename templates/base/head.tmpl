@@ -19,7 +19,7 @@
 		<script type="text/javascript" src="/js/semantic.min.js"></script>
 		<script type="text/javascript" src="/js/registry.js"></script>
 
-		<title>{{if .Title}}{{.Title}} - {{end}}{{.i18n.Tr "app_desc"}}</title>
+		<title>{{if .Title}}{{.Title}} - {{end}}{{if .PageIsHome}}{{.i18n.Tr "app_desc"}}{{else}}{{.i18n.Tr  "app_title"}}{{end}}</title>
 	</head>
 	<body>
 		<div id="registry" class="Grid">

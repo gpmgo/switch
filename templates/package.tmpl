@@ -1,0 +1,37 @@
+{{template "base/head" .}}
+<div class="container">
+	<div class="col-md-10">
+		<h2 class="ui dividing header">
+			{{.ImportPath}}
+		</h2>
+		<div>
+			<h4><i class="barcode icon"></i>{{.i18n.Tr "package.info"}}</h4>
+			<ul class="ui list">
+				<li>{{.i18n.Tr "package.source_code"}}: <a href="http://{{.ImportPath}}">{{.ImportPath}}</a></li>
+				<li>
+					{{.i18n.Tr "package.reference"}}: 
+					<a href="https://gowalker.org/{{.ImportPath}}"><img src="http://img.shields.io/badge/Go_Walker-Doc-blue.svg?style=flat"></a>
+					<a href="http://gobuild.io/{{.ImportPath}}"><img src="https://img.shields.io/badge/gobuild-download-green.svg?style=flat"></a>
+					<a href="https://godoc.org/{{.ImportPath}}"><img src="https://godoc.org/{{.ImportPath}}?status.svg" alt="GoDoc"></a>
+					<a href="http://gocover.io/{{.ImportPath}}"><img src="http://gocover.io/_badge/{{.ImportPath}}"></a>
+				</li>
+			</ul>
+			<h4><i class="shield icon"></i>{{.i18n.Tr "package.badges"}}</h4>
+			<div>
+				<p>
+					<img src="/badge/{{.ImportPath}}">
+				</p>
+				<h5>HTML:</h5>
+				<div class="ui fluid input">
+					<input class="click-select" value='<a href="http://gopm.io/{{.ImportPath}}"><img src="http://gopm.io/badge/{{.ImportPath}}"></a>'>
+				</div>
+				<h5>Markdown:</h5>
+				<div class="ui fluid input">
+					<input class="click-select" value='[![Gopm Download](http://gopm.io/badge/{{.ImportPath}})](http://gopm.io/{{.ImportPath}})'>
+				</div>
+			</div>
+		</div>
+	</div>
+	{{template "base/navbar" .}}
+</div>
+{{template "base/footer" .}}

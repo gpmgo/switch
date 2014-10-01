@@ -54,7 +54,7 @@
 					    <div class="content popup" data-content="{{.ImportPath}}">
 					      	<div class="header">
 					      		<span class="ui green label">{{.RecentDownload}}</span>
-					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
+					      		<a href="/{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
 					      	</div>
 					      	{{SubStr .Description 0 30}}
 					    </div>
@@ -74,7 +74,7 @@
 					    <div class="content popup" data-content="{{.ImportPath}}">
 					      	<div class="header">
 					      		<span class="ui green label">{{.DownloadCount}}</span>
-					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
+					      		<a href="/{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
 					      	</div>
 					      	{{SubStr .Description 0 30}}
 					    </div>
@@ -94,7 +94,7 @@
 					    <div class="content popup" data-content="{{.ImportPath}}">
 					      	<div class="header">
 					      		<span class="ui green label">{{.DownloadCount}}</span>
-					      		<a href="https://{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
+					      		<a href="/{{.ImportPath}}">{{SubStr .ImportPath 0 27}}</a>
 					      	</div>
 					      	{{SubStr .Description 0 30}}
 					    </div>
@@ -108,4 +108,3 @@
 	{{template "base/navbar" .}}
 </div>
 {{template "base/footer" .}}
-
