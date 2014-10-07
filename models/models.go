@@ -45,6 +45,7 @@ func init() {
 	statistic()
 	c := cron.New()
 	c.AddFunc("@every 5m", statistic)
+	c.Start()
 }
 
 func Ping() error {
