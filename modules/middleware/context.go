@@ -24,7 +24,6 @@ import (
 
 	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/cache"
-	"github.com/macaron-contrib/i18n"
 	"github.com/macaron-contrib/session"
 
 	"github.com/gpmgo/switch/modules/base"
@@ -34,7 +33,6 @@ import (
 // Context represents context of a request.
 type Context struct {
 	*macaron.Context
-	i18n.Locale
 	Cache cache.Cache
 	Flash *session.Flash
 }
@@ -139,10 +137,9 @@ func (ctx *Context) ServeContent(name string, r io.ReadSeeker, params ...interfa
 
 // Contexter initializes a classic context for a request.
 func Contexter() macaron.Handler {
-	return func(c *macaron.Context, l i18n.Locale, cache cache.Cache, f *session.Flash) {
+	return func(c *macaron.Context, cache cache.Cache, f *session.Flash) {
 		ctx := &Context{
 			Context: c,
-			Locale:  l,
 			Cache:   cache,
 			Flash:   f,
 		}

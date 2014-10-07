@@ -22,7 +22,7 @@ import (
 func Home(ctx *middleware.Context) {
 	ctx.Data["Title"] = ctx.Tr("app_title")
 	ctx.Data["PageIsHome"] = true
-	ctx.Data["Stats"] = models.Statistic()
+	ctx.Data["Stats"] = models.Statistic
 	ctx.HTML(200, "home")
 }
 

@@ -19,6 +19,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+	"github.com/robfig/cron"
 
 	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/setting"
@@ -40,6 +41,10 @@ func init() {
 	} else if err = x.Sync(new(Package), new(Revision), new(Downloader)); err != nil {
 		log.Fatal(4, "Fail to sync database: %v", err)
 	}
+
+	statistic()
+	c := cron.New()
+	c.AddFunc("@every 5m", statistic)
 }
 
 func Ping() error {
@@ -49,29 +54,30 @@ func Ping() error {
 type DownloadStats struct {
 	NumTotalDownload int64
 }
+
 type Stats struct {
 	NumPackages, NumDownloaders int64
 	DownloadStats
 	TrendingPackages, NewPackages, PopularPackages []*Package
 }
 
-func Statistic() *Stats {
-	s := new(Stats)
+var Statistic Stats
+
+func statistic() {
 	x.Iterate(new(Package), func(idx int, bean interface{}) error {
 		pkg := bean.(*Package)
-		s.NumTotalDownload += pkg.DownloadCount
+		Statistic.NumTotalDownload += pkg.DownloadCount
 		return nil
 	})
-	s.NumPackages, _ = x.Count(new(Package))
-	s.NumDownloaders, _ = x.Count(new(Downloader))
+	Statistic.NumPackages, _ = x.Count(new(Package))
+	Statistic.NumDownloaders, _ = x.Count(new(Downloader))
 
-	s.TrendingPackages = make([]*Package, 0, 15)
-	x.Limit(15).Desc("recent_download").Find(&s.TrendingPackages)
+	Statistic.TrendingPackages = make([]*Package, 0, 15)
+	x.Limit(15).Desc("recent_download").Find(&Statistic.TrendingPackages)
 
-	s.NewPackages = make([]*Package, 0, 15)
-	x.Limit(15).Desc("created").Find(&s.NewPackages)
+	Statistic.NewPackages = make([]*Package, 0, 15)
+	x.Limit(15).Desc("created").Find(&Statistic.NewPackages)
 
-	s.PopularPackages = make([]*Package, 0, 15)
-	x.Limit(15).Desc("download_count").Find(&s.PopularPackages)
-	return s
+	Statistic.PopularPackages = make([]*Package, 0, 15)
+	x.Limit(15).Desc("download_count").Find(&Statistic.PopularPackages)
 }
