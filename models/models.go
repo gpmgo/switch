@@ -65,11 +65,13 @@ type Stats struct {
 var Statistic Stats
 
 func statistic() {
+	var totalDownload int64
 	x.Iterate(new(Package), func(idx int, bean interface{}) error {
 		pkg := bean.(*Package)
-		Statistic.NumTotalDownload += pkg.DownloadCount
+		totalDownload += pkg.DownloadCount
 		return nil
 	})
+	Statistic.NumTotalDownload = totalDownload
 	Statistic.NumPackages, _ = x.Count(new(Package))
 	Statistic.NumDownloaders, _ = x.Count(new(Downloader))
 
