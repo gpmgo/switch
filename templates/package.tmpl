@@ -3,6 +3,9 @@
 	<div class="col-md-10">
 		<h2 class="ui dividing header">
 			{{.ImportPath}}
+			<a class="small ui basic button" href="/download?pkgname={{.Title}}">
+				<i class="awesome download cloud icon"></i>{{.i18n.Tr "package.download"}}
+			</a>
 		</h2>
 		<div>
 			<h4><i class="barcode icon"></i>{{.i18n.Tr "package.info"}}</h4>
