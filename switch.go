@@ -40,7 +40,7 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.3.7.1013"
+const APP_VER = "0.3.8.1016"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -57,9 +57,6 @@ func newMacaron() *macaron.Macaron {
 			SkipLogging: !setting.DisableRouterLog,
 		},
 	))
-	if setting.EnableGzip {
-		m.Use(macaron.Gzip())
-	}
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		Directory:  "templates",
 		Funcs:      []template.FuncMap{base.TemplateFuncs},

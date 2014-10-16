@@ -11,6 +11,7 @@ import (
 	"github.com/qiniu/api/rs"
 
 	"github.com/gpmgo/switch/models"
+	"github.com/gpmgo/switch/modules/archive"
 	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/setting"
 )
@@ -50,10 +51,20 @@ func UploadArchives() {
 			continue
 		}
 
+		ext := archive.GetExtension(pkg.ImportPath)
 		uptoken := genUptoken()
-		key := pkg.ImportPath + "-" + rev.Revision
+		key := pkg.ImportPath + "-" + rev.Revision + ext
 		localPath := path.Join(pkg.ImportPath, rev.Revision)
-		fpath := path.Join(setting.ArchivePath, localPath+".zip")
+		fpath := path.Join(setting.ArchivePath, localPath+ext)
+
+		// Move.
+		// rsCli := rs.New(nil)
+		// log.Info(key)
+		// err = rsCli.Move(nil, setting.BucketName, pkg.ImportPath+"-"+rev.Revision, setting.BucketName, key)
+		// if err != nil {
+		// 	log.Error(4, rev.Revision)
+		// }
+		// continue
 
 		if !com.IsFile(fpath) {
 			log.Debug("Delete: %v", fpath)

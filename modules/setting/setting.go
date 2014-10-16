@@ -49,7 +49,6 @@ var (
 	DisableRouterLog   bool
 	CertFile, KeyFile  string
 	ArchivePath        string
-	EnableGzip         bool
 
 	// Security settings.
 	SecretKey          = "!#@FDEWREWR&*("
