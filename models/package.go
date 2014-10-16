@@ -75,7 +75,7 @@ func DeleteRevisionById(revId int64) error {
 // GetLocalRevisions returns all revisions that archives are saved locally.
 func GetLocalRevisions() ([]*Revision, error) {
 	revs := make([]*Revision, 0, 10)
-	err := x.Where("storage=1").Find(&revs)
+	err := x.Where("storage=0").Find(&revs)
 	return revs, err
 }
 
