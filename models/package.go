@@ -43,6 +43,7 @@ type Revision struct {
 	PkgId    int64  `xorm:"UNIQUE(s)"`
 	Revision string `xorm:"UNIQUE(s)"`
 	Storage
+	Updated time.Time `xorm:"UPDATED"`
 }
 
 // GetRevision returns revision by given pakcage ID and revision.
@@ -171,9 +172,9 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 			PkgId:    pkg.Id,
 			Revision: n.Revision,
 		}
-		if _, err = x.Insert(r); err != nil {
-			return nil, err
-		}
+		_, err = x.Insert(r)
+	} else {
+		_, err = x.Id(r.Id).Update(r)
 	}
 	return r, nil
 }
