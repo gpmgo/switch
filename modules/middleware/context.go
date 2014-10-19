@@ -114,7 +114,7 @@ func (ctx *Context) ServeFile(file string, names ...string) {
 	ctx.Resp.Header().Set("Expires", "0")
 	ctx.Resp.Header().Set("Cache-Control", "must-revalidate")
 	ctx.Resp.Header().Set("Pragma", "public")
-	http.ServeFile(ctx.Resp, ctx.Req, file)
+	http.ServeFile(ctx.Resp, ctx.Req.Request, file)
 }
 
 func (ctx *Context) ServeContent(name string, r io.ReadSeeker, params ...interface{}) {
@@ -132,7 +132,7 @@ func (ctx *Context) ServeContent(name string, r io.ReadSeeker, params ...interfa
 	ctx.Resp.Header().Set("Expires", "0")
 	ctx.Resp.Header().Set("Cache-Control", "must-revalidate")
 	ctx.Resp.Header().Set("Pragma", "public")
-	http.ServeContent(ctx.Resp, ctx.Req, name, modtime, r)
+	http.ServeContent(ctx.Resp, ctx.Req.Request, name, modtime, r)
 }
 
 // Contexter initializes a classic context for a request.
