@@ -123,7 +123,10 @@ func main() {
 
 		// Admin APIs.
 		m.Group("/admin", func() {
-			m.Get("/package/revision/large", admin.ListLargeRevisions)
+			m.Group("/package", func() {
+				m.Post("/block", admin.BlockPackage)
+				m.Get("/revision/large", admin.ListLargeRevisions)
+			})
 		}, admin.ValidateToken())
 	})
 

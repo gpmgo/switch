@@ -25,6 +25,7 @@ import (
 	"github.com/gpmgo/switch/models"
 	"github.com/gpmgo/switch/modules/archive"
 	"github.com/gpmgo/switch/modules/middleware"
+	"github.com/gpmgo/switch/modules/qiniu"
 	"github.com/gpmgo/switch/modules/setting"
 )
 
@@ -75,14 +76,14 @@ func ListLargeRevisions(ctx *middleware.Context) {
 			ctx.JSON(500, map[string]string{
 				"error": fmt.Sprintf("fail to open file(%s): %v", fpath, err),
 			})
-			continue
+			return
 		}
 		fi, err := f.Stat()
 		if err != nil {
 			ctx.JSON(500, map[string]string{
 				"error": fmt.Sprintf("fail to get file info(%s): %v", fpath, err),
 			})
-			continue
+			return
 		}
 		// Greater then MAX_UPLOAD_SIZE.
 		if fi.Size() > setting.MaxUploadSize<<20 {
@@ -104,4 +105,50 @@ func ListLargeRevisions(ctx *middleware.Context) {
 	ctx.JSON(200, map[string]interface{}{
 		"revisions": &largeRevs,
 	})
+}
+
+func BlockPackage(ctx *middleware.Context) {
+	id := ctx.QueryInt64("id")
+	pkg, err := models.GetPakcageById(id)
+	if err != nil {
+		if err == models.ErrPackageNotExist {
+			ctx.JSON(404, map[string]string{
+				"error": err.Error(),
+			})
+		} else {
+			ctx.JSON(500, map[string]string{
+				"error": fmt.Sprintf("fail to get package by ID(%d): %v", id, err),
+			})
+		}
+		return
+	}
+
+	revs, err := pkg.GetRevisions()
+	if err != nil {
+		ctx.JSON(500, map[string]string{
+			"error": fmt.Sprintf("fail to get package revisions by ID(%d): %v", id, err),
+		})
+		return
+	}
+
+	models.BlockPackage(pkg, revs, ctx.Query("note"))
+	return
+
+	// Delete package archives.
+	ext := archive.GetExtension(pkg.ImportPath)
+	for _, rev := range revs {
+		switch rev.Storage {
+		case models.LOCAL:
+			localPath := path.Join(pkg.ImportPath, rev.Revision)
+			os.Remove(path.Join(setting.ArchivePath, localPath+ext))
+		case models.QINIU:
+			key := pkg.ImportPath + "-" + rev.Revision + ext
+			if err = qiniu.DeleteArchive(key); err != nil {
+				ctx.JSON(500, map[string]string{
+					"error": fmt.Sprintf("fail to delete archive(%s): %v", key, err),
+				})
+				return
+			}
+		}
+	}
 }

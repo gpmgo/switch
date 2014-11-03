@@ -28,6 +28,7 @@ import (
 var (
 	ErrPackageNotExist  = errors.New("Package does not exist")
 	ErrRevisionNotExist = errors.New("Revision does not exist")
+	ErrPackageBlocked   = errors.New("Package has been blocked")
 )
 
 type Storage int
@@ -80,6 +81,13 @@ func GetLocalRevisions() ([]*Revision, error) {
 	return revs, err
 }
 
+// GetRevisionsByPkgId returns a list of revisions of given package ID.
+func GetRevisionsByPkgId(pkgId int64) ([]*Revision, error) {
+	revs := make([]*Revision, 0, 10)
+	err := x.Where("pkg_id=?", pkgId).Find(&revs)
+	return revs, err
+}
+
 // Package represents a Go package.
 type Package struct {
 	Id             int64
@@ -91,6 +99,10 @@ type Package struct {
 	RecentDownload int64
 	IsValidated    bool      `xorm:"DEFAULT 0"`
 	Created        time.Time `xorm:"CREATED"`
+}
+
+func (pkg *Package) GetRevisions() ([]*Revision, error) {
+	return GetRevisionsByPkgId(pkg.Id)
 }
 
 // NewPackage creates
@@ -134,8 +146,16 @@ func GetPakcageByPath(importPath string) (*Package, error) {
 func CheckPkg(importPath, rev string) (*Revision, error) {
 	// Check package record.
 	pkg, err := GetPakcageByPath(importPath)
-	if err != nil && err != ErrPackageNotExist {
-		return nil, err
+	if err != nil {
+		if err != ErrPackageNotExist {
+			return nil, err
+		}
+		blocked, err := IsPackageBlocked(importPath)
+		if err != nil {
+			return nil, err
+		} else if blocked {
+			return nil, ErrPackageBlocked
+		}
 	}
 
 	n := archive.NewNode(importPath, rev)
@@ -206,4 +226,60 @@ func SearchPackages(keys string) ([]*Package, error) {
 	pkgs := make([]*Package, 0, 50)
 	err := x.Limit(50).Where("name like '%" + keys + "%'").Find(&pkgs)
 	return pkgs, err
+}
+
+// Block represents information of a blocked package.
+type Block struct {
+	Id         int64
+	ImportPath string `xorm:"UNIQUE"`
+	Note       string
+	Created    time.Time `xorm:"CREATED"`
+}
+
+// BlockPackage blocks given package.
+func BlockPackage(pkg *Package, revs []*Revision, note string) (err error) {
+	sess := x.NewSession()
+	defer sess.Close()
+	if err = sess.Begin(); err != nil {
+		return err
+	}
+
+	for _, rev := range revs {
+		if _, err = sess.Id(rev.Id).Delete(new(Revision)); err != nil {
+			sess.Rollback()
+			return err
+		}
+	}
+
+	if _, err = sess.Id(pkg.Id).Delete(new(Package)); err != nil {
+		sess.Rollback()
+		return err
+	}
+	has, err := x.Where("import_path=?", pkg.ImportPath).Get(new(Block))
+	if err != nil {
+		return err
+	} else if has {
+		return nil
+	}
+
+	b := &Block{
+		ImportPath: pkg.ImportPath,
+		Note:       note,
+	}
+	if _, err = sess.Insert(b); err != nil {
+		sess.Rollback()
+		return err
+	}
+
+	return sess.Commit()
+}
+
+func IsPackageBlocked(path string) (bool, error) {
+	return x.Where("import_path=?", path).Get(new(Block))
+}
+
+func GetBlockedPackage(path string) (*Block, error) {
+	b := new(Block)
+	_, err := x.Where("import_path=?", path).Get(b)
+	return b, err
 }

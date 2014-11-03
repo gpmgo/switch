@@ -40,6 +40,13 @@ func Download(ctx *middleware.Context) {
 			case archive.ErrNotMatchAnyService:
 				ctx.Data["Err_PkgName"] = true
 				errMsg = ctx.Tr("download.err_not_match_service")
+			case models.ErrPackageBlocked:
+				b, err := models.GetBlockedPackage(importPath)
+				if err != nil {
+					errMsg = err.Error()
+				} else {
+					errMsg = ctx.Tr("download.err_package_blocked", b.Note)
+				}
 			}
 			ctx.RenderWithErr(errMsg, "download", nil)
 			return

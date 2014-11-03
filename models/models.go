@@ -38,7 +38,7 @@ func init() {
 		setting.Cfg.MustValue("database", "NAME")))
 	if err != nil {
 		log.Fatal(4, "Fail to init new engine: %v", err)
-	} else if err = x.Sync(new(Package), new(Revision), new(Downloader)); err != nil {
+	} else if err = x.Sync(new(Package), new(Revision), new(Downloader), new(Block)); err != nil {
 		log.Fatal(4, "Fail to sync database: %v", err)
 	}
 

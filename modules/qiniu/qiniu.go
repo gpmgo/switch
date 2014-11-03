@@ -28,7 +28,7 @@ func init() {
 	}
 }
 
-func genUptoken() string {
+func GenUptoken() string {
 	putPolicy := rs.PutPolicy{
 		Scope: setting.BucketName,
 	}
@@ -52,7 +52,7 @@ func UploadArchives() {
 		}
 
 		ext := archive.GetExtension(pkg.ImportPath)
-		uptoken := genUptoken()
+		uptoken := GenUptoken()
 		key := pkg.ImportPath + "-" + rev.Revision + ext
 		localPath := path.Join(pkg.ImportPath, rev.Revision)
 		fpath := path.Join(setting.ArchivePath, localPath+ext)
@@ -104,4 +104,10 @@ func UploadArchives() {
 		os.Remove(fpath)
 		log.Info("Uploaded: %s", localPath)
 	}
+}
+
+// DeleteArchive deletes a archive from QiNiu.
+func DeleteArchive(key string) error {
+	rsCli := rs.New(nil)
+	return rsCli.Delete(nil, setting.BucketName, key)
 }
