@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"path"
 	"strings"
 	"time"
 
@@ -35,12 +34,6 @@ type Context struct {
 	*macaron.Context
 	Cache cache.Cache
 	Flash *session.Flash
-}
-
-// Query querys form parameter.
-func (ctx *Context) Query(name string) string {
-	ctx.Req.ParseForm()
-	return ctx.Req.Form.Get(name)
 }
 
 // HasError returns true if error occurs in form validation.
@@ -98,23 +91,6 @@ func (ctx *Context) Handle(status int, title string, err error) {
 		ctx.Data["Title"] = "Internal Server Error"
 	}
 	ctx.HTML(status, base.TplName(fmt.Sprintf("status/%d", status)))
-}
-
-func (ctx *Context) ServeFile(file string, names ...string) {
-	var name string
-	if len(names) > 0 {
-		name = names[0]
-	} else {
-		name = path.Base(file)
-	}
-	ctx.Resp.Header().Set("Content-Description", "File Transfer")
-	ctx.Resp.Header().Set("Content-Type", "application/octet-stream")
-	ctx.Resp.Header().Set("Content-Disposition", "attachment; filename="+name)
-	ctx.Resp.Header().Set("Content-Transfer-Encoding", "binary")
-	ctx.Resp.Header().Set("Expires", "0")
-	ctx.Resp.Header().Set("Cache-Control", "must-revalidate")
-	ctx.Resp.Header().Set("Pragma", "public")
-	http.ServeFile(ctx.Resp, ctx.Req.Request, file)
 }
 
 func (ctx *Context) ServeContent(name string, r io.ReadSeeker, params ...interface{}) {

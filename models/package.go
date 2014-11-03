@@ -89,6 +89,7 @@ type Package struct {
 	Issues         string
 	DownloadCount  int64
 	RecentDownload int64
+	IsValidated    bool      `xorm:"DEFAULT 0"`
 	Created        time.Time `xorm:"CREATED"`
 }
 

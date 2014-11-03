@@ -83,8 +83,8 @@ func UploadArchives() {
 			log.Error(5, "Fail to get file info(%s): %v", fpath, err)
 			continue
 		}
-		// Greater then 5 MB.
-		if fi.Size() > 5<<20 {
+		// Greater then MAX_UPLOAD_SIZE.
+		if fi.Size() > setting.MaxUploadSize<<20 {
 			log.Debug("Ignore large archive: %v", fpath)
 			continue
 		}

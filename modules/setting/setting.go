@@ -49,6 +49,7 @@ var (
 	DisableRouterLog   bool
 	CertFile, KeyFile  string
 	ArchivePath        string
+	MaxUploadSize      int64
 
 	// Security settings.
 	SecretKey          = "!#@FDEWREWR&*("
@@ -67,6 +68,9 @@ var (
 	// Session settings.
 	SessionProvider string
 	SessionConfig   *session.Config
+
+	// Admin settings.
+	AccessToken string
 
 	// Global setting objects.
 	Cfg           *goconfig.ConfigFile
@@ -161,6 +165,8 @@ func init() {
 	ArchivePath = Cfg.MustValue("server", "ARCHIVE_PATH", "data/archives")
 	os.MkdirAll(ArchivePath, os.ModePerm)
 
+	MaxUploadSize = Cfg.MustInt64("server", "MAX_UPLOAD_SIZE", 5)
+
 	GithubCredentials = "client_id=" + Cfg.MustValue("github", "CLIENT_ID") +
 		"&client_secret=" + Cfg.MustValue("github", "CLIENT_SECRET")
 
@@ -172,6 +178,8 @@ func init() {
 
 	Langs = Cfg.MustValueArray("i18n", "LANGS", ",")
 	Names = Cfg.MustValueArray("i18n", "NAMES", ",")
+
+	AccessToken = Cfg.MustValue("admin", "ACCESS_TOKEN")
 }
 
 func newSessionService() {

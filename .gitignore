@@ -5,3 +5,5 @@ switch
 custom/
 data/
 public/VERSION.json
+switch.sublime-project
+switch.sublime-workspace

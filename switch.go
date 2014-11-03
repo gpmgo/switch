@@ -37,10 +37,11 @@ import (
 	_ "github.com/gpmgo/switch/modules/qiniu"
 	"github.com/gpmgo/switch/modules/setting"
 	"github.com/gpmgo/switch/routers"
+	"github.com/gpmgo/switch/routers/api/admin"
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.4.1.1019"
+const APP_VER = "0.5.0.1102"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -112,13 +113,18 @@ func main() {
 	m.Get("/badge/*", routers.Badge)
 
 	// API routers.
-	m.Group("/api", func(_ *macaron.Router) {
-		m.Group("/v1", func(_ *macaron.Router) {
-			m.Group("", func(r *macaron.Router) {
-				r.Get("/download", v1.Download)
-				r.Get("/revision", v1.GetRevision)
+	m.Group("/api", func() {
+		m.Group("/v1", func() {
+			m.Group("", func() {
+				m.Get("/download", v1.Download)
+				m.Get("/revision", v1.GetRevision)
 			}, v1.PackageFilter())
 		})
+
+		// Admin APIs.
+		m.Group("/admin", func() {
+			m.Get("/package/revision/large", admin.ListLargeRevisions)
+		}, admin.ValidateToken())
 	})
 
 	// Robots.txt
