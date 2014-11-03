@@ -131,16 +131,10 @@ func BlockPackage(ctx *middleware.Context) {
 		return
 	}
 
-	models.BlockPackage(pkg, revs, ctx.Query("note"))
-	return
-
 	// Delete package archives.
 	ext := archive.GetExtension(pkg.ImportPath)
 	for _, rev := range revs {
 		switch rev.Storage {
-		case models.LOCAL:
-			localPath := path.Join(pkg.ImportPath, rev.Revision)
-			os.Remove(path.Join(setting.ArchivePath, localPath+ext))
 		case models.QINIU:
 			key := pkg.ImportPath + "-" + rev.Revision + ext
 			if err = qiniu.DeleteArchive(key); err != nil {
@@ -151,4 +145,16 @@ func BlockPackage(ctx *middleware.Context) {
 			}
 		}
 	}
+	os.RemoveAll(path.Join(setting.ArchivePath, pkg.ImportPath))
+
+	if err = models.BlockPackage(pkg, revs, ctx.Query("note")); err != nil {
+		ctx.JSON(500, map[string]string{
+			"error": fmt.Sprintf("fail to block package by ID(%d): %v", id, err),
+		})
+		return
+	}
+
+	ctx.JSON(200, map[string]interface{}{
+		"ok": true,
+	})
 }
