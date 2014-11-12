@@ -105,6 +105,7 @@ var (
 	services = []*service{
 		{githubPattern, "github.com/", getGithubArchive},
 		{googlePattern, "code.google.com/", getGoogleArchive},
+		{golangPattern, "golang.org/x/", getGolangArchive},
 		{bitbucketPattern, "bitbucket.org/", getBitbucketArchive},
 		// {oscPattern, "git.oschina.net/", getOscPkg},
 		// {gitcafePattern, "gitcafe.com/", getGitcafePkg},
@@ -114,6 +115,7 @@ var (
 	revServices = []*revService{
 		{"github.com/", getGithubRevision},
 		{"code.google.com/", getGoogleRevision},
+		{"golang.org/x/", getGolangRevision},
 		{"bitbucket.org/", getBitbucketRevision},
 		{"gopkg.in/", getGopkgRevision},
 	}

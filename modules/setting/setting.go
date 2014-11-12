@@ -82,10 +82,12 @@ var (
 		"git.oschina.net": 3,
 		"gitcafe.com":     3,
 		"launchpad.net":   2,
+		"golang.org":      3,
 	}
 	ExtensionPairs = map[string]string{
 		"github.com/":      ".zip",
 		"code.google.com/": ".zip",
+		"golang.org/":      ".zip",
 		"bitbucket.org/":   ".zip",
 		"git.oschina.net/": ".zip",
 		"gitcafe.com/":     ".tar",
@@ -193,9 +195,6 @@ func newSessionService() {
 	SessionConfig.EnableSetCookie = Cfg.MustBool("session", "ENABLE_SET_COOKIE", true)
 	SessionConfig.Gclifetime = Cfg.MustInt64("session", "GC_INTERVAL_TIME", 86400)
 	SessionConfig.Maxlifetime = Cfg.MustInt64("session", "SESSION_LIFE_TIME", 86400)
-	SessionConfig.SessionIDHashFunc = Cfg.MustValueRange("session", "SESSION_ID_HASHFUNC",
-		"sha1", []string{"sha1", "sha256", "md5"})
-	SessionConfig.SessionIDHashKey = Cfg.MustValue("session", "SESSION_ID_HASHKEY", string(com.RandomCreateBytes(16)))
 
 	if SessionProvider == "file" {
 		os.MkdirAll(path.Dir(SessionConfig.ProviderConfig), os.ModePerm)
