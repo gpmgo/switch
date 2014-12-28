@@ -16,13 +16,9 @@ package middleware
 
 import (
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
-	"time"
 
 	"github.com/Unknwon/macaron"
-	"github.com/macaron-contrib/cache"
 	"github.com/macaron-contrib/session"
 
 	"github.com/gpmgo/switch/modules/base"
@@ -32,7 +28,6 @@ import (
 // Context represents context of a request.
 type Context struct {
 	*macaron.Context
-	Cache cache.Cache
 	Flash *session.Flash
 }
 
@@ -93,30 +88,11 @@ func (ctx *Context) Handle(status int, title string, err error) {
 	ctx.HTML(status, base.TplName(fmt.Sprintf("status/%d", status)))
 }
 
-func (ctx *Context) ServeContent(name string, r io.ReadSeeker, params ...interface{}) {
-	modtime := time.Now()
-	for _, p := range params {
-		switch v := p.(type) {
-		case time.Time:
-			modtime = v
-		}
-	}
-	ctx.Resp.Header().Set("Content-Description", "File Transfer")
-	ctx.Resp.Header().Set("Content-Type", "application/octet-stream")
-	ctx.Resp.Header().Set("Content-Disposition", "attachment; filename="+name)
-	ctx.Resp.Header().Set("Content-Transfer-Encoding", "binary")
-	ctx.Resp.Header().Set("Expires", "0")
-	ctx.Resp.Header().Set("Cache-Control", "must-revalidate")
-	ctx.Resp.Header().Set("Pragma", "public")
-	http.ServeContent(ctx.Resp, ctx.Req.Request, name, modtime, r)
-}
-
 // Contexter initializes a classic context for a request.
 func Contexter() macaron.Handler {
-	return func(c *macaron.Context, cache cache.Cache, f *session.Flash) {
+	return func(c *macaron.Context, f *session.Flash) {
 		ctx := &Context{
 			Context: c,
-			Cache:   cache,
 			Flash:   f,
 		}
 		// Compute current URL for real-time change language.

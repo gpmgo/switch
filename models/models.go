@@ -32,10 +32,10 @@ var (
 func init() {
 	var err error
 	x, err = xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8",
-		setting.Cfg.MustValue("database", "USER"),
-		setting.Cfg.MustValue("database", "PASSWD"),
-		setting.Cfg.MustValue("database", "HOST"),
-		setting.Cfg.MustValue("database", "NAME")))
+		setting.Cfg.Section("database").Key("USER").String(),
+		setting.Cfg.Section("database").Key("PASSWD").String(),
+		setting.Cfg.Section("database").Key("HOST").String(),
+		setting.Cfg.Section("database").Key("NAME").String()))
 	if err != nil {
 		log.Fatal(4, "Fail to init new engine: %v", err)
 	} else if err = x.Sync(new(Package), new(Revision), new(Downloader), new(Block)); err != nil {

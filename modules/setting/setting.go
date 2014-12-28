@@ -16,40 +16,24 @@ package setting
 
 import (
 	"os"
-	"path"
-	"strings"
 
 	"github.com/Unknwon/com"
-	"github.com/Unknwon/goconfig"
 	"github.com/Unknwon/macaron"
-	"github.com/macaron-contrib/session"
 	"github.com/qiniu/api/conf"
+	"gopkg.in/ini.v0"
 
 	"github.com/gpmgo/switch/modules/log"
-)
-
-type Scheme string
-
-const (
-	HTTP  Scheme = "http"
-	HTTPS Scheme = "https"
 )
 
 var (
 	// App settings.
 	AppVer  string
 	AppName string
-	AppLogo string
-	AppUrl  string
 
 	// Server settings.
-	Protocol           Scheme
-	Domain             string
-	HttpAddr, HttpPort string
-	DisableRouterLog   bool
-	CertFile, KeyFile  string
-	ArchivePath        string
-	MaxUploadSize      int64
+	HttpPort      int
+	ArchivePath   string
+	MaxUploadSize int64
 
 	// Security settings.
 	SecretKey          = "!#@FDEWREWR&*("
@@ -57,23 +41,11 @@ var (
 	CookieUserName     = "gopm_awesome"
 	CookieRememberName = "gopm_incredible"
 
-	// Cache settings.
-	CacheAdapter  string
-	CacheInternal int
-	CacheConn     string
-
-	EnableRedis    bool
-	EnableMemcache bool
-
-	// Session settings.
-	SessionProvider string
-	SessionConfig   *session.Config
-
 	// Admin settings.
 	AccessToken string
 
 	// Global setting objects.
-	Cfg           *goconfig.ConfigFile
+	Cfg           *ini.File
 	ProdMode      bool
 	RootPathPairs = map[string]int{
 		"github.com":      3,
@@ -99,9 +71,6 @@ var (
 	// QiNiu settings.
 	BucketName string
 	BucketUrl  string
-
-	// I18n settings.
-	Langs, Names []string
 )
 
 var Service struct {
@@ -110,100 +79,40 @@ var Service struct {
 	ResetPwdCodeLives    int
 }
 
-func newCacheService() {
-	CacheAdapter = Cfg.MustValueRange("cache", "ADAPTER", "memory", []string{"memory", "redis", "memcache"})
-	if EnableRedis {
-		log.Info("Redis Enabled")
-	}
-	if EnableMemcache {
-		log.Info("Memcache Enabled")
-	}
-
-	switch CacheAdapter {
-	case "memory":
-		CacheInternal = Cfg.MustInt("cache", "INTERVAL", 60)
-	case "redis", "memcache":
-		CacheConn = strings.Trim(Cfg.MustValue("cache", "HOST"), "\" ")
-	default:
-		log.Fatal(4, "Unknown cache adapter: %s", CacheAdapter)
-	}
-
-	log.Info("Cache Service Enabled")
-}
-
 func init() {
 	log.NewLogger(0, "console", `{"level": 0}`)
 
-	var err error
-	Cfg, err = goconfig.LoadConfigFile("conf/app.ini")
-	if err != nil {
-		log.Fatal(4, "Fail to parse 'conf/app.ini': %v", err)
-	}
+	sources := []interface{}{"conf/app.ini"}
 	if com.IsFile("custom/app.ini") {
-		if err = Cfg.AppendFiles("custom/app.ini"); err != nil {
-			log.Fatal(4, "Fail to load 'custom/app.ini': %v", err)
-		}
+		sources = append(sources, "custom/app.ini")
+	}
+	if err := macaron.SetConfig(sources[0], sources[1:]...); err != nil {
+		log.Fatal(4, "Fail to set configuration: %v", err)
 	}
 
-	AppName = Cfg.MustValue("", "APP_NAME")
-	AppLogo = Cfg.MustValue("", "APP_LOGO", "img/favicon.png")
-	AppUrl = Cfg.MustValue("server", "ROOT_URL", "http://localhost:8084")
+	Cfg = macaron.Config()
 
-	if Cfg.MustValue("", "RUN_MODE", "dev") == "prod" {
+	AppName = Cfg.Section("").Key("APP_NAME").String()
+
+	if Cfg.Section("").Key("RUN_MODE").MustString("dev") == "prod" {
 		macaron.Env = macaron.PROD
 		ProdMode = true
 	}
 
-	Protocol = HTTP
-	if Cfg.MustValue("server", "PROTOCOL") == "https" {
-		Protocol = HTTPS
-		CertFile = Cfg.MustValue("server", "CERT_FILE")
-		KeyFile = Cfg.MustValue("server", "KEY_FILE")
-	}
-	Domain = Cfg.MustValue("server", "DOMAIN", "localhost")
-	HttpAddr = Cfg.MustValue("server", "HTTP_ADDR", "0.0.0.0")
-	HttpPort = Cfg.MustValue("server", "HTTP_PORT", "8084")
-	DisableRouterLog = Cfg.MustBool("server", "DISABLE_ROUTER_LOG")
-	ArchivePath = Cfg.MustValue("server", "ARCHIVE_PATH", "data/archives")
+	HttpPort = Cfg.Section("server").Key("HTTP_PORT").MustInt(8084)
+	ArchivePath = Cfg.Section("server").Key("ARCHIVE_PATH").MustString("data/archives")
 	os.MkdirAll(ArchivePath, os.ModePerm)
 
-	MaxUploadSize = Cfg.MustInt64("server", "MAX_UPLOAD_SIZE", 5)
+	MaxUploadSize = Cfg.Section("server").Key("MAX_UPLOAD_SIZE").MustInt64(5)
 
-	GithubCredentials = "client_id=" + Cfg.MustValue("github", "CLIENT_ID") +
-		"&client_secret=" + Cfg.MustValue("github", "CLIENT_SECRET")
+	GithubCredentials = "client_id=" + Cfg.Section("github").Key("CLIENT_ID").String() +
+		"&client_secret=" + Cfg.Section("github").Key("CLIENT_SECRET").String()
 
-	conf.UP_HOST = Cfg.MustValue("qiniu", "UP_HOST", conf.UP_HOST)
-	BucketName = Cfg.MustValue("qiniu", "BUCKET_NAME")
-	BucketUrl = Cfg.MustValue("qiniu", "BUCKET_URL")
-	conf.ACCESS_KEY = Cfg.MustValue("qiniu", "ACCESS_KEY")
-	conf.SECRET_KEY = Cfg.MustValue("qiniu", "SECRET_KEY")
+	conf.UP_HOST = Cfg.Section("qiniu").Key("UP_HOST").MustString(conf.UP_HOST)
+	BucketName = Cfg.Section("qiniu").Key("BUCKET_NAME").String()
+	BucketUrl = Cfg.Section("qiniu").Key("BUCKET_URL").String()
+	conf.ACCESS_KEY = Cfg.Section("qiniu").Key("ACCESS_KEY").String()
+	conf.SECRET_KEY = Cfg.Section("qiniu").Key("SECRET_KEY").String()
 
-	Langs = Cfg.MustValueArray("i18n", "LANGS", ",")
-	Names = Cfg.MustValueArray("i18n", "NAMES", ",")
-
-	AccessToken = Cfg.MustValue("admin", "ACCESS_TOKEN")
-}
-
-func newSessionService() {
-	SessionProvider = Cfg.MustValueRange("session", "PROVIDER", "memory",
-		[]string{"memory", "file", "redis", "mysql"})
-
-	SessionConfig = new(session.Config)
-	SessionConfig.ProviderConfig = strings.Trim(Cfg.MustValue("session", "PROVIDER_CONFIG"), "\" ")
-	SessionConfig.CookieName = Cfg.MustValue("session", "COOKIE_NAME", "i_like_gogits")
-	SessionConfig.Secure = Cfg.MustBool("session", "COOKIE_SECURE")
-	SessionConfig.EnableSetCookie = Cfg.MustBool("session", "ENABLE_SET_COOKIE", true)
-	SessionConfig.Gclifetime = Cfg.MustInt64("session", "GC_INTERVAL_TIME", 86400)
-	SessionConfig.Maxlifetime = Cfg.MustInt64("session", "SESSION_LIFE_TIME", 86400)
-
-	if SessionProvider == "file" {
-		os.MkdirAll(path.Dir(SessionConfig.ProviderConfig), os.ModePerm)
-	}
-
-	log.Info("Session Service Enabled")
-}
-
-func NewServices() {
-	newCacheService()
-	newSessionService()
+	AccessToken = Cfg.Section("admin").Key("ACCESS_TOKEN").String()
 }

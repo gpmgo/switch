@@ -25,12 +25,9 @@ import (
 	"strings"
 
 	"github.com/Unknwon/macaron"
-	"github.com/macaron-contrib/cache"
 	"github.com/macaron-contrib/i18n"
 	"github.com/macaron-contrib/session"
-	"github.com/macaron-contrib/toolbox"
 
-	"github.com/gpmgo/switch/models"
 	"github.com/gpmgo/switch/modules/base"
 	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/middleware"
@@ -41,62 +38,28 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.5.1.1112"
+const APP_VER = "0.6.0.1228"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	setting.AppVer = APP_VER
 }
 
-// newMacaron initializes Macaron instance.
-func newMacaron() *macaron.Macaron {
-	m := macaron.New()
-	m.Use(macaron.Logger())
-	m.Use(macaron.Recovery())
-	m.Use(macaron.Static("public",
-		macaron.StaticOptions{
-			SkipLogging: !setting.DisableRouterLog,
-		},
-	))
+func main() {
+	log.Info("%s %s", setting.AppName, APP_VER)
+	log.Info("Run Mode: %s", strings.Title(macaron.Env))
+
+	m := macaron.Classic()
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		Directory:  "templates",
 		Funcs:      []template.FuncMap{base.TemplateFuncs},
 		IndentJSON: macaron.Env != macaron.PROD,
 	}))
-	m.Use(i18n.I18n(i18n.Options{
-		Langs:    setting.Langs,
-		Names:    setting.Names,
-		Redirect: true,
-	}))
-	m.Use(cache.Cacher(cache.Options{
-		Adapter:  setting.CacheAdapter,
-		Interval: setting.CacheInternal,
-		Conn:     setting.CacheConn,
-	}))
-	m.Use(session.Sessioner(session.Options{
-		Provider: setting.SessionProvider,
-		Config:   *setting.SessionConfig,
-	}))
-	m.Use(toolbox.Toolboxer(m, toolbox.Options{
-		HealthCheckFuncs: []*toolbox.HealthCheckFuncDesc{
-			&toolbox.HealthCheckFuncDesc{
-				Desc: "Database connection",
-				Func: models.Ping,
-			},
-		},
-	}))
+	m.Use(i18n.I18n())
+	m.Use(session.Sessioner())
 	m.Use(middleware.Contexter())
-	return m
-}
 
-func main() {
-	log.Info("%s %s", setting.AppName, APP_VER)
-	log.Info("Run Mode: %s", strings.Title(macaron.Env))
-	setting.NewServices()
-
-	m := newMacaron()
-
-	// Routers.
+	// Routes.
 	m.Get("/", routers.Home)
 	m.Route("/download", "GET,POST", routers.Download)
 	m.Get("/favicon.ico", func(ctx *middleware.Context) {
@@ -105,14 +68,14 @@ func main() {
 	// m.Get("/search", routers.Search)
 	// m.Get("/about", routers.About)
 
-	// Documentation routers.
+	// Documentation routes.
 	m.Get("/docs/*", routers.Docs)
 
-	// Package routers.
+	// Package routes.
 	m.Get("/*", routers.Package)
 	m.Get("/badge/*", routers.Badge)
 
-	// API routers.
+	// API routes.
 	m.Group("/api", func() {
 		m.Group("/v1", func() {
 			m.Group("", func() {
@@ -137,21 +100,11 @@ Disallow: /api/
 Disallow: /download`
 	})
 
-	// Not found handler.
 	m.NotFound(routers.NotFound)
 
-	var err error
-	listenAddr := fmt.Sprintf("%s:%s", setting.HttpAddr, setting.HttpPort)
-	log.Info("Listen: %v://%s", setting.Protocol, listenAddr)
-	switch setting.Protocol {
-	case setting.HTTP:
-		err = http.ListenAndServe(listenAddr, m)
-	case setting.HTTPS:
-		err = http.ListenAndServeTLS(listenAddr, setting.CertFile, setting.KeyFile, m)
-	default:
-		log.Fatal(4, "Invalid protocol: %s", setting.Protocol)
-	}
-	if err != nil {
+	listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HttpPort)
+	log.Info("Listen: http://%s", listenAddr)
+	if err := http.ListenAndServe(listenAddr, m); err != nil {
 		log.Fatal(4, "Fail to start server: %v", err)
 	}
 }
