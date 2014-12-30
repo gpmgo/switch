@@ -17,7 +17,6 @@ package base
 import (
 	"html/template"
 	"path/filepath"
-	"runtime"
 	"strings"
 
 	"github.com/Unknwon/i18n"
@@ -61,14 +60,6 @@ func init() {
 	}
 }
 
-func Str2html(raw string) template.HTML {
-	return template.HTML(raw)
-}
-
-func Range(l int) []int {
-	return make([]int, l)
-}
-
 func ShortSha(sha1 string) string {
 	if len(sha1) == 40 {
 		return sha1[:10]
@@ -76,35 +67,24 @@ func ShortSha(sha1 string) string {
 	return sha1
 }
 
+func SubStr(str string, start, length int) string {
+	if len(str) == 0 {
+		return ""
+	}
+	end := start + length
+	if len(str) < end {
+		return str
+	}
+	return str[start:end] + "..."
+}
+
 var TemplateFuncs template.FuncMap = map[string]interface{}{
-	"GoVer": func() string {
-		return runtime.Version()
-	},
-	"AppName": func() string {
-		return setting.AppName
-	},
-	"AppVer": func() string {
-		return setting.AppVer
-	},
-	"AvatarLink": AvatarLink,
-	"str2html":   Str2html,
-	"TimeSince":  TimeSince,
-	"FileSize":   FileSize,
-	"Subtract":   Subtract,
+	"TimeSince": TimeSince,
+	"FileSize":  FileSize,
+	"Subtract":  Subtract,
 	"Add": func(a, b int) int {
 		return a + b
 	},
 	"DateFormat": DateFormat,
-	"SubStr": func(str string, start, length int) string {
-		if len(str) == 0 {
-			return ""
-		}
-		end := start + length
-		if len(str) < end {
-			return str
-		}
-		return str[start:end] + "..."
-	},
-	"ShortSha": ShortSha,
-	"i18n":     i18n.Tr,
+	"ShortSha":   ShortSha,
 }

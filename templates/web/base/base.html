@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="shortcut icon" href="/img/favicon.png" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <meta name="author" content="Gopm - Go Package Manager" />
+		<meta name="description" content="Go Package Manager Registry Server" />
+		<meta name="keywords" content="gopm, Go, Golang, package manage, registry">
+		<meta name="_csrf" content="{{CsrfToken}}" />
+
+		 <!-- Stylesheets -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/semantic.min.css" />
+		<link rel="stylesheet" href="/css/switch.css" />
+
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/js/semantic.min.js"></script>
+		<script type="text/javascript" src="/js/switch.js"></script>
+
+		<title>{% if Title %}{{Title}} - {% endif %}{% if PageIsHome %}{{Tr(Lang, "app_desc")}}{% else %}{{Tr(Lang, "app_title")}}{% endif %}</title>
+	</head>
+	<body>
+		<div class="ui menu">
+			<div class="container">
+				<div class="menu">
+				  	<a class="item {% if PageIsHome %}active{% endif %}" href="/">
+				    	<i class="home icon"></i> {{Tr(Lang, "home")}}
+				  	</a>
+				  	<a href="/download" class="item {% if PageIsDownload %}active{% endif %}">
+				  		<i class="awesome download cloud icon"></i> {{Tr(Lang, "download")}}
+				  	</a>
+				  	<a href="https://github.com/gpmgo/gopm" class="item">
+				  		<i class="terminal icon"></i> {{Tr(Lang, "cmd_tool")}}
+				  	</a>
+				  	<div class="right menu">
+					  	<a class="item" target="_blank" href="http://obahua.com">
+					    	<i class="rss icon"></i> {{Tr(Lang, "blog")}}
+					  	</a>
+					  	<a class="item" href="https://github.com/gpmgo/switch">
+					    	<i class="github icon"></i> GitHub
+					  	</a>
+					</div>
+			  	</div>
+			</div>
+		</div>
+		<div id="registry">
+			<noscript>Please enable JavaScript in your browser!</noscript>
+			{% block brand %}{% endblock %}
+			<div class="container">
+				<div class="col-md-12">
+					{% block body %}{% endblock %}
+				</div>
+			</div>
+			<div class="footer">
+				<div class="container">
+					<div class="row">
+						<div class="col-md-3">
+							<h5>{{Tr(Lang, "follow_us")}}</h5>
+							<div class="ui link list">
+						 		<a class="item" target="_blank" href="http://weibo.com/obahua">新浪微博</a> 
+						 		<a class="item" target="_blank" href="https://twitter.com/joe2010xtmf">Twitter</a> 
+						 		<a class="item" target="_blank" href="https://github.com/Unknwon">GitHub</a> 
+							</div>
+						</div>
+						<div class="col-md-3">
+							<h5>{{Tr(Lang, "friends")}}</h5>
+							<div class="ui link list">
+						 		<a class="item" target="_blank" href="http://golangtc.com">Golang 中国</a> 
+						 		<a class="item" target="_blank" href="http://golanghome.com/">Go 友团</a> 
+						 		<a class="item" target="_blank" href="http://studygolang.com/">Go 语言学习园地</a> 
+							</div>
+						</div>
+						<div class="col-md-3">
+							<h5>{{Tr(Lang, "sponsor")}}</h5>
+							<div class="ui link list">
+						 		<a class="item" target="_blank" href="http://qiniu.com">七牛云存储</a> 
+							</div>
+						</div>
+						<div class="col-md-3">
+							<h5>{{Tr(Lang, "language_option")}}</h5>
+							<div class="ui link list">
+						 		<a class="item" href="{{Link}}?lang=en-US">English</a> 
+						 		<a class="item" href="{{Link}}?lang=zh-CN">简体中文</a>
+							</div>
+						</div>
+					</div>
+					<br>	
+					<div class="row">
+						<p class="copyright">
+							Copyright © 2014 Go Package Manager
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

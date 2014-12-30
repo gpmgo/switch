@@ -16,7 +16,8 @@ package models
 
 import (
 	"errors"
-	// "fmt"
+	"fmt"
+	"regexp"
 	"strings"
 	"time"
 
@@ -28,7 +29,6 @@ import (
 var (
 	ErrPackageNotExist  = errors.New("Package does not exist")
 	ErrRevisionNotExist = errors.New("Revision does not exist")
-	ErrPackageBlocked   = errors.New("Package has been blocked")
 )
 
 type Storage int
@@ -150,11 +150,11 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 		if err != ErrPackageNotExist {
 			return nil, err
 		}
-		blocked, err := IsPackageBlocked(importPath)
+		blocked, blockErr, err := IsPackageBlocked(importPath)
 		if err != nil {
 			return nil, err
 		} else if blocked {
-			return nil, ErrPackageBlocked
+			return nil, blockErr
 		}
 	}
 
@@ -173,7 +173,7 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 		}
 	}
 
-	// return nil, fmt.Errorf("Revision: %s", n.Revision)
+	return nil, fmt.Errorf("Revision: %s", n.Revision)
 
 	if r == nil || (r.Storage == LOCAL && !com.IsFile(n.ArchivePath)) {
 		if err := n.Download(); err != nil {
@@ -228,12 +228,27 @@ func SearchPackages(keys string) ([]*Package, error) {
 	return pkgs, err
 }
 
+// BlockError represents a block error which contains block note.
+type BlockError struct {
+	note string
+}
+
+func (e *BlockError) Error() string {
+	return e.note
+}
+
 // Block represents information of a blocked package.
 type Block struct {
 	Id         int64
 	ImportPath string `xorm:"UNIQUE"`
 	Note       string
-	Created    time.Time `xorm:"CREATED"`
+}
+
+// BlockRule represents a rule for blocking packages.
+type BlockRule struct {
+	Id   int64
+	Rule string `xorm:"TEXT"`
+	Note string
 }
 
 // BlockPackage blocks given package.
@@ -274,12 +289,31 @@ func BlockPackage(pkg *Package, revs []*Revision, note string) (err error) {
 	return sess.Commit()
 }
 
-func IsPackageBlocked(path string) (bool, error) {
-	return x.Where("import_path=?", path).Get(new(Block))
-}
-
-func GetBlockedPackage(path string) (*Block, error) {
+// IsPackageBlocked checks if a package is blocked.
+func IsPackageBlocked(path string) (bool, error, error) {
 	b := new(Block)
-	_, err := x.Where("import_path=?", path).Get(b)
-	return b, err
+	has, err := x.Where("import_path=?", path).Get(b)
+	if err != nil {
+		return false, nil, err
+	} else if has {
+		return true, &BlockError{b.Note}, nil
+	}
+
+	if err = x.Iterate(new(BlockRule), func(idx int, bean interface{}) error {
+		r := bean.(*BlockRule)
+		exp, err := regexp.Compile(r.Rule)
+		if err != nil {
+			return err
+		}
+		if exp.MatchString(path) {
+			return &BlockError{r.Note}
+		}
+		return nil
+	}); err != nil {
+		if _, ok := err.(*BlockError); ok {
+			return true, err, nil
+		}
+		return false, nil, err
+	}
+	return false, nil, nil
 }

@@ -23,6 +23,7 @@ import (
 
 	"github.com/gpmgo/switch/modules/base"
 	"github.com/gpmgo/switch/modules/log"
+	"github.com/gpmgo/switch/modules/setting"
 )
 
 // Context represents context of a request.
@@ -102,6 +103,10 @@ func Contexter() macaron.Handler {
 			link = link[:i]
 		}
 		ctx.Data["Link"] = link
+
+		// Pongo2.
+		ctx.Data["AppVer"] = setting.AppVer
+		ctx.Data["SubStr"] = base.SubStr
 
 		c.Map(ctx)
 	}

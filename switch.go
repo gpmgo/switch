@@ -19,16 +19,15 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"net/http"
 	"runtime"
 	"strings"
 
 	"github.com/Unknwon/macaron"
 	"github.com/macaron-contrib/i18n"
+	"github.com/macaron-contrib/pongo2"
 	"github.com/macaron-contrib/session"
 
-	"github.com/gpmgo/switch/modules/base"
 	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/middleware"
 	_ "github.com/gpmgo/switch/modules/qiniu"
@@ -50,8 +49,8 @@ func main() {
 	log.Info("Run Mode: %s", strings.Title(macaron.Env))
 
 	m := macaron.Classic()
-	m.Use(macaron.Renderer(macaron.RenderOptions{
-		Funcs:      []template.FuncMap{base.TemplateFuncs},
+	m.Use(pongo2.Pongoers(pongo2.Options{
+		Directory:  "templates/web",
 		IndentJSON: macaron.Env != macaron.PROD,
 	}))
 	m.Use(i18n.I18n())
