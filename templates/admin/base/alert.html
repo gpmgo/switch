@@ -1,0 +1,10 @@
+{% if Flash.ErrorMsg %}
+<div class="ui error message">
+    <p>{{Flash.ErrorMsg}}</p>
+</div>
+{% endif %}
+{% if Flash.SuccessMsg %}
+<div class="ui success message">
+	<p>{{Flash.SuccessMsg}}</p>
+</div>
+{% endif %}

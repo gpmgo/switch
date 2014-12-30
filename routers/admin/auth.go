@@ -15,25 +15,19 @@
 package admin
 
 import (
-	"github.com/Unknwon/macaron"
-
 	"github.com/gpmgo/switch/modules/middleware"
 	"github.com/gpmgo/switch/modules/setting"
 )
 
-func ValidateToken() macaron.Handler {
-	return func(ctx *middleware.Context) {
-		if len(setting.AccessToken) == 0 {
-			ctx.JSON(500, map[string]string{
-				"error": "no access token configurated",
-			})
-			return
-		}
-		if ctx.Query("access_token") != setting.AccessToken {
-			ctx.JSON(500, map[string]string{
-				"error": "access denied",
-			})
-			return
-		}
+func Auth(ctx *middleware.Context) {
+	if len(setting.AccessToken) == 0 ||
+		ctx.GetCookie("access_token") != setting.AccessToken {
+		ctx.Data["PageIsAuth"] = true
+		ctx.HTML(200, "auth")
 	}
+}
+
+func AuthPost(ctx *middleware.Context) {
+	ctx.SetCookie("access_token", ctx.Query("token"))
+	ctx.Redirect("/admin")
 }

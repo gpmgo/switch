@@ -26,6 +26,7 @@ import (
 
 func Download(ctx *middleware.Context) {
 	ctx.Data["Title"] = ctx.Tr("download")
+	ctx.Data["PageIsDownload"] = true
 	importPath := archive.GetRootPath(ctx.Query("pkgname"))
 
 	if ctx.Req.Method == "POST" {

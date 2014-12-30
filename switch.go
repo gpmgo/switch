@@ -33,7 +33,7 @@ import (
 	_ "github.com/gpmgo/switch/modules/qiniu"
 	"github.com/gpmgo/switch/modules/setting"
 	"github.com/gpmgo/switch/routers"
-	"github.com/gpmgo/switch/routers/api/admin"
+	"github.com/gpmgo/switch/routers/admin"
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
@@ -52,7 +52,7 @@ func main() {
 	m.Use(pongo2.Pongoers(pongo2.Options{
 		Directory:  "templates/web",
 		IndentJSON: macaron.Env != macaron.PROD,
-	}))
+	}, "templates/admin"))
 	m.Use(i18n.I18n())
 	m.Use(session.Sessioner())
 	m.Use(middleware.Contexter())
@@ -66,14 +66,24 @@ func main() {
 	// m.Get("/search", routers.Search)
 	// m.Get("/about", routers.About)
 
-	// Documentation routes.
-	m.Get("/docs/*", routers.Docs)
-
-	// Package routes.
+	// Package.
 	m.Get("/*", routers.Package)
 	m.Get("/badge/*", routers.Badge)
 
-	// API routes.
+	// Admin.
+	m.Post("/admin/auth", admin.AuthPost)
+	m.Group("/admin", func() {
+		m.Get("", admin.Dashboard)
+
+		m.Group("/blocks", func() {
+			m.Get("", admin.Blocks)
+			m.Get("/rules", admin.BlockRules)
+			m.Combo("/rules/new").Get(admin.NewBlockRule).Post(admin.NewBlockRulePost)
+			m.Get("/rules/:id:int/delete", admin.DeleteBlockRule)
+		})
+	}, admin.Auth)
+
+	// API.
 	m.Group("/api", func() {
 		m.Group("/v1", func() {
 			m.Group("", func() {
@@ -81,14 +91,6 @@ func main() {
 				m.Get("/revision", v1.GetRevision)
 			}, v1.PackageFilter())
 		})
-
-		// Admin APIs.
-		m.Group("/admin", func() {
-			m.Group("/package", func() {
-				m.Post("/block", admin.BlockPackage)
-				m.Get("/revision/large", admin.ListLargeRevisions)
-			})
-		}, admin.ValidateToken())
 	})
 
 	// Robots.txt

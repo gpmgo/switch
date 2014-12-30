@@ -1,0 +1,28 @@
+{% extends "../base/base.html" %}
+{% block body %}
+<h3 class="ui dividing header">
+  Add New Block Rule
+</h3>
+<form method="post">
+  <div class="ui {% if Flash.ErrorMsg %}error {% endif %}form">
+    {% include "../base/alert.html" %}
+    <div class="field">
+      <label>
+       Rule
+      </label>
+      <div class="ui icon input">
+        <input name="rule" required>
+      </div>
+    </div>
+    <div class="field">
+      <label>
+        Note
+      </label>
+      <div class="ui icon input">
+        <input name="note" required>
+      </div>
+    </div>
+    <button class="ui blue submit button" type="submit">Submit</button>
+  </div>
+</form>
+{% endblock %}

@@ -67,6 +67,7 @@ var (
 		"launchpad.net/":   ".tar.gz",
 	}
 	GithubCredentials string
+	PageSize          = 30
 
 	// QiNiu settings.
 	BucketName string

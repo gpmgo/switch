@@ -1,0 +1,37 @@
+{% extends "../base/base.html" %}
+{% block body %}
+{% include "../base/alert.html" %}
+<table class="ui table">
+	<thead>
+  	<tr>
+      <th>ID</th>
+      <th>Rule</th>
+      <th>Note</th>
+      <th>Op.</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in Rules %}
+    <tr>
+      <td>{{r.Id}}</td>
+      <td>{{r.Rule}}</td>
+      <td>{{r.Note}}</td>
+      <td>
+        <a href="/admin/blocks/rules/{{r.Id}}"><i class="edit icon"></i></a>
+        <a href="/admin/blocks/rules/{{r.Id}}/delete"><i class="red trash icon"></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot class="full-width">
+    <tr>
+      <th></th>
+      <th colspan="4">
+        <a class="ui right floated small primary labeled icon button" href="/admin/blocks/rules/new">
+          <i class="content icon"></i> Add Rule
+        </a>
+      </th>
+    </tr>
+  </tfoot>
+</table>
+{% endblock %}

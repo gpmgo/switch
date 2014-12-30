@@ -12,5 +12,9 @@ $(document).ready(
 		$(".click-select").click(function(){
 			$(this).select();
 		});
+
+		$('.ui.modal')
+		  .modal('show')
+		;
 	}
 )

@@ -58,7 +58,11 @@ func (ctx *Context) HasError() bool {
 
 // HTML calls Context.HTML and converts template name to string.
 func (ctx *Context) HTML(status int, name base.TplName) {
-	ctx.Context.HTML(status, string(name))
+	if strings.HasPrefix(ctx.Req.Request.URL.Path, "/admin") {
+		ctx.Context.HTMLSet(status, "admin", string(name))
+	} else {
+		ctx.Context.HTML(status, string(name))
+	}
 }
 
 // RenderWithErr used for page has form validation but need to prompt error to users.

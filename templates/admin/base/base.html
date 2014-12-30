@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<link rel="shortcut icon" href="/img/favicon.png" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <meta name="author" content="Gopm - Go Package Manager" />
+		<meta name="description" content="Go Package Manager Registry Server" />
+		<meta name="keywords" content="gopm, Go, Golang, package manage, registry">
+		<meta name="_csrf" content="{{CsrfToken}}" />
+
+		 <!-- Stylesheets -->
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/semantic.min.css" />
+		<link rel="stylesheet" href="/css/switch.css" />
+
+		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="/js/semantic.min.js"></script>
+		<script type="text/javascript" src="/js/switch.js"></script>
+
+		<title>{% if Title %}{{Title}} - {% endif %}{{Tr(Lang, "app_title")}}</title>
+	</head>
+	<body>
+		{% if !PageIsAuth %}
+		<div class="ui menu">
+			<div class="container">
+				<div class="menu">
+				  	<a class="item {% if PageIsDashboard %}active{% endif %}" href="/admin">
+				    	<i class="dashboard icon"></i> Dashboard
+				  	</a>
+				  	<div class="right menu">
+					  	<a class="item" href="/">
+					    	<i class="mail forward icon"></i> Back To Site
+					  	</a>
+					</div>
+			  	</div>
+			</div>
+		</div>
+		{% endif %}
+		<div>
+			<div class="container">			
+				<div class="row">
+					{% if !PageIsAuth %}
+					<div class="col-md-3">
+						<div class="ui vertical menu">
+						  	<a class="item {% if PageIsDashboard %}active{% endif %}" href="/admin">
+						    Dashboard
+						  	</a>
+						  	<a class="item {% if PageIsPackages %}active{% endif %}" href="/admin/packages">
+						    Packages
+						  	</a>
+						  	<a class="item {% if PageIsBlocks %}active{% endif %}" href="/admin/blocks">
+						    Blocks
+						  	</a>
+						</div>
+					</div>
+					{% endif %}
+					<div class="col-md-9">
+						{% if PageIsBlocks %}
+						<div class="ui secondary pointing menu">
+						  	<a class="item {% if PageIsBlocksList %}active{% endif %}" href="/admin/blocks">Blocks</a>
+						  	<a class="item {% if PageIsBlocksRules %}active{% endif %}" href="/admin/blocks/rules">Rules</a>
+						</div>
+						{% endif %}
+
+						{% block body %}{% endblock %}
+					</div>
+				</div>
+			</div>
+			<div class="footer">
+				<div class="container">
+					<div class="row">
+						<p class="copyright">
+							Copyright © 2014 Go Package Manager
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

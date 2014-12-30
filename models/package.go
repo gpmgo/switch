@@ -17,7 +17,6 @@ package models
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 	"time"
 
@@ -44,6 +43,7 @@ type Revision struct {
 	PkgId    int64  `xorm:"UNIQUE(s)"`
 	Revision string `xorm:"UNIQUE(s)"`
 	Storage
+	Size    int64
 	Updated time.Time `xorm:"UPDATED"`
 }
 
@@ -226,94 +226,4 @@ func SearchPackages(keys string) ([]*Package, error) {
 	pkgs := make([]*Package, 0, 50)
 	err := x.Limit(50).Where("name like '%" + keys + "%'").Find(&pkgs)
 	return pkgs, err
-}
-
-// BlockError represents a block error which contains block note.
-type BlockError struct {
-	note string
-}
-
-func (e *BlockError) Error() string {
-	return e.note
-}
-
-// Block represents information of a blocked package.
-type Block struct {
-	Id         int64
-	ImportPath string `xorm:"UNIQUE"`
-	Note       string
-}
-
-// BlockRule represents a rule for blocking packages.
-type BlockRule struct {
-	Id   int64
-	Rule string `xorm:"TEXT"`
-	Note string
-}
-
-// BlockPackage blocks given package.
-func BlockPackage(pkg *Package, revs []*Revision, note string) (err error) {
-	sess := x.NewSession()
-	defer sess.Close()
-	if err = sess.Begin(); err != nil {
-		return err
-	}
-
-	for _, rev := range revs {
-		if _, err = sess.Id(rev.Id).Delete(new(Revision)); err != nil {
-			sess.Rollback()
-			return err
-		}
-	}
-
-	if _, err = sess.Id(pkg.Id).Delete(new(Package)); err != nil {
-		sess.Rollback()
-		return err
-	}
-	has, err := x.Where("import_path=?", pkg.ImportPath).Get(new(Block))
-	if err != nil {
-		return err
-	} else if has {
-		return nil
-	}
-
-	b := &Block{
-		ImportPath: pkg.ImportPath,
-		Note:       note,
-	}
-	if _, err = sess.Insert(b); err != nil {
-		sess.Rollback()
-		return err
-	}
-
-	return sess.Commit()
-}
-
-// IsPackageBlocked checks if a package is blocked.
-func IsPackageBlocked(path string) (bool, error, error) {
-	b := new(Block)
-	has, err := x.Where("import_path=?", path).Get(b)
-	if err != nil {
-		return false, nil, err
-	} else if has {
-		return true, &BlockError{b.Note}, nil
-	}
-
-	if err = x.Iterate(new(BlockRule), func(idx int, bean interface{}) error {
-		r := bean.(*BlockRule)
-		exp, err := regexp.Compile(r.Rule)
-		if err != nil {
-			return err
-		}
-		if exp.MatchString(path) {
-			return &BlockError{r.Note}
-		}
-		return nil
-	}); err != nil {
-		if _, ok := err.(*BlockError); ok {
-			return true, err, nil
-		}
-		return false, nil, err
-	}
-	return false, nil, nil
 }

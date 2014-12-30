@@ -12,23 +12,13 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package routers
+package admin
 
 import (
-	// "fmt"
-
-	"github.com/gpmgo/switch/modules/base"
 	"github.com/gpmgo/switch/modules/middleware"
 )
 
-var docUrls = map[string]bool{}
-
-func Docs(ctx *middleware.Context) {
-	url := ctx.Params("*")
-	if !docUrls[url] {
-		ctx.Handle(404, "Documentation", nil)
-		return
-	}
-
-	ctx.HTML(200, "docs/"+base.TplName(url))
+func Dashboard(ctx *middleware.Context) {
+	ctx.Data["PageIsDashboard"] = true
+	ctx.HTML(200, "dashboard")
 }
