@@ -62,7 +62,7 @@
 	<div class="sub header">{{Tr(Lang, "home.ranking_intro")}}</div>
 </h2>
 <div class="row">
-	{% macro pkg_list(icon, name, pkgs)%}
+	{% macro pkg_list(icon, name, pkgs, recent)%}
 	<div class="col-md-4">
 		<h3 class="ui header">
 			<i class="{{icon}} icon"></i>
@@ -73,7 +73,7 @@
 		  	<div class="item">
 			    <div class="content popup" data-content="{{p.ImportPath}}">
 			      	<div class="header">
-			      		<span class="ui green label">{{p.RecentDownload}}</span>
+			      		<span class="ui green label">{% if recent %}{{p.RecentDownload}}{% else %}{{p.DownloadCount}}{% endif %}</span>
 			      		<a href="/{{p.ImportPath}}">{{SubStr(p.ImportPath, 0, 30)}}</a>
 			      	</div>
 			    </div>
@@ -87,8 +87,8 @@
 		{% endcomment %}
 	</div>
 	{% endmacro %}
-	{{pkg_list("rocket", Tr(Lang, "home.trending"), Stats.TrendingPackages)}}
-	{{pkg_list("sun", Tr(Lang, "home.new"), Stats.NewPackages)}}
-	{{pkg_list("flag", Tr(Lang, "home.popular"), Stats.PopularPackages)}}
+	{{pkg_list("rocket", Tr(Lang, "home.trending"), Stats.TrendingPackages, true)}}
+	{{pkg_list("sun", Tr(Lang, "home.new"), Stats.NewPackages, false)}}
+	{{pkg_list("flag", Tr(Lang, "home.popular"), Stats.PopularPackages, false)}}
 </div>
 {% endblock %}
