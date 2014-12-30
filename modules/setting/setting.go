@@ -20,7 +20,7 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/Unknwon/macaron"
 	"github.com/qiniu/api/conf"
-	"gopkg.in/ini.v0"
+	"gopkg.in/ini.v1"
 
 	"github.com/gpmgo/switch/modules/log"
 )

@@ -38,7 +38,7 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.6.0.1229"
+const APP_VER = "0.6.0.1230"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -51,7 +51,6 @@ func main() {
 
 	m := macaron.Classic()
 	m.Use(macaron.Renderer(macaron.RenderOptions{
-		Directory:  "templates",
 		Funcs:      []template.FuncMap{base.TemplateFuncs},
 		IndentJSON: macaron.Env != macaron.PROD,
 	}))

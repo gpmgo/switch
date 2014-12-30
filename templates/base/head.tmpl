@@ -11,9 +11,9 @@
 		<meta name="_csrf" content="{{.CsrfToken}}" />
 
 		 <!-- Stylesheets -->
-		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-		<link href="/css/semantic.min.css" rel="stylesheet" />
-		<link href="/css/switch.css" rel="stylesheet" />
+		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/css/semantic.min.css" />
+		<link rel="stylesheet" href="/css/switch.css" />
 
 		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="/js/semantic.min.js"></script>
@@ -26,9 +26,9 @@
 		<noscript>Please enable JavaScript in your browser!</noscript>
 		<div class="segment">
 			<div class="container">
-		    	<div class="col-md-9">
+		    	<div class="col-md-9 brand">
 		      		<h1 class="ui dividing header">
-		      			{{.i18n.Tr  "app_title"}}
+		      			<a href="/">{{.i18n.Tr  "app_title"}}</a>
 		  				<!-- <div class="ui mini icon input">
 							<input id="search-box" type="text" placeholder="{{.i18n.Tr "home.search"}}..." value="{{.SearchKeyword}}">
 							<i class="circular search icon"></i>

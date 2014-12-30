@@ -11,23 +11,21 @@
 			  	<div class="{{if .Err_PkgName}}error{{end}} field">
 			    	<label>
 			    		{{.i18n.Tr "download.import_path"}}
+			    		<i class="red asterisk icon"></i>
 			    	</label>
-			    	<div class="ui left labeled icon input">
+		    		<div class="ui icon input">
 			      		<input name="pkgname" placeholder="{{.i18n.Tr "download.import_path_helper"}}" value="{{.pkgname}}" required>
 			      		<i class="code icon"></i>
-			      		<div class="ui corner label">
-			        		<i class="icon asterisk"></i>
-			      		</div>
-			    	</div>
+		      		</div>
 			  	</div>
 			  	<div class="{{if .Err_Revision}}error{{end}} field">
 			    	<label>
 			    		{{.i18n.Tr "download.revision"}}
 			    	</label>
-			    	<div class="ui left labeled icon input">
+		    		<div class="ui icon input">
 			      		<input name="revision" placeholder="{{.i18n.Tr "download.revision_helper"}}" value="{{.revision}}">
 			      		<i class="tag icon"></i>
-			    	</div>
+			      	</div>
 			  	</div>
 			  	<button class="ui blue submit button" type="submit">{{.i18n.Tr "download.download_now"}}</button>
 			</div>
