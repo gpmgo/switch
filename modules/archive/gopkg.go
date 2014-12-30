@@ -45,6 +45,10 @@ func getGopkgRevision(client *http.Client, n *Node) error {
 	}
 	n.DownloadURL = path.Join("github.com", user, name)
 
+	if m[3] == "v0" {
+		m[3] = "master"
+	}
+
 	// Parse revision SHA by tag.
 	req, err := http.NewRequest("GET", "https://"+n.DownloadURL+".git/info/refs?service=git-upload-pack", nil)
 	if err != nil {
