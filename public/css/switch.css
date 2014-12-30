@@ -13,6 +13,9 @@ body {
     color: rgb(15, 15, 15);
     text-decoration: none;
 }
+.brand h4 {
+    margin-top: 0;
+}
 #registry > .segment {
     margin: 0px 0px 3em;
     padding-top: 30px;
