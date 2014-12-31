@@ -15,8 +15,13 @@
 package admin
 
 import (
+	"fmt"
+
 	"github.com/gpmgo/switch/models"
+	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/middleware"
+	"github.com/gpmgo/switch/modules/qiniu"
+	"github.com/gpmgo/switch/modules/setting"
 )
 
 func Blocks(ctx *middleware.Context) {
@@ -59,6 +64,31 @@ func NewBlockRulePost(ctx *middleware.Context) {
 	}
 
 	ctx.Flash.Success("New block rule has been added!")
+	ctx.Redirect("/admin/blocks/rules")
+}
+
+func RunRule(ctx *middleware.Context) {
+	ctx.Data["PageIsBlocks"] = true
+	ctx.Data["PageIsBlocksRules"] = true
+
+	rid := ctx.ParamsInt64(":id")
+	count, keys, err := models.RunBlockRule(rid)
+	if err != nil {
+		ctx.Handle(500, "RunBlockRule", err)
+		return
+	}
+
+	if setting.ProdMode {
+		for _, k := range keys {
+			log.Trace("Deleting archive: %s", k)
+			if err = qiniu.DeleteArchive(k); err != nil {
+				log.Error(4, "Fail to delete archive(%s): %v", k, err)
+			}
+			log.Info("Archive deleted: %s", k)
+		}
+	}
+
+	ctx.Flash.Success(fmt.Sprintf("%d packages are blocked by rule ID: %d.", count, rid))
 	ctx.Redirect("/admin/blocks/rules")
 }
 

@@ -5,7 +5,7 @@
 	<thead>
   	<tr>
       <th>ID</th>
-      <th>Rule</th>
+      <th>Revision</th>
       <th>Note</th>
       <th>Op.</th>
     </tr>
@@ -14,11 +14,10 @@
     {% for r in Rules %}
     <tr>
       <td>{{r.Id}}</td>
-      <td><code>{{r.Rule}}</code></td>
+      <td>{{r.Rule}}</td>
       <td>{{r.Note}}</td>
       <td>
         <a href="/admin/blocks/rules/{{r.Id}}"><i class="edit icon"></i></a>
-        <a href="/admin/blocks/rules/{{r.Id}}/run"><i class="green play icon"></i></a>
         <a href="/admin/blocks/rules/{{r.Id}}/delete"><i class="red trash icon"></i></a>
       </td>
     </tr>

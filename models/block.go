@@ -15,9 +15,19 @@
 package models
 
 import (
+	"errors"
+	"fmt"
+	"os"
+	"path"
 	"regexp"
 
+	"github.com/gpmgo/switch/modules/archive"
+	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/setting"
+)
+
+var (
+	ErrBlockRuleNotExist = errors.New("Block rule does not exist")
 )
 
 // BlockError represents a block error which contains block note.
@@ -87,6 +97,18 @@ func NewBlockRule(r *BlockRule) error {
 	return err
 }
 
+// GetBlockRuleById returns a block rule by given ID.
+func GetBlockRuleById(id int64) (*BlockRule, error) {
+	r := new(BlockRule)
+	has, err := x.Id(id).Get(r)
+	if err != nil {
+		return nil, err
+	} else if !has {
+		return nil, ErrBlockRuleNotExist
+	}
+	return r, nil
+}
+
 // ListBlockRules returns a list of block rules with given offset.
 func ListBlockRules(offset int) ([]*BlockRule, error) {
 	rules := make([]*BlockRule, 0, setting.PageSize)
@@ -126,4 +148,58 @@ func IsPackageBlocked(path string) (bool, error, error) {
 		return false, nil, err
 	}
 	return false, nil, nil
+}
+
+// RunBlockRule applies given block rule to all packages.
+func RunBlockRule(id int64) (count int64, keys []string, err error) {
+	r, err := GetBlockRuleById(id)
+	if err != nil {
+		return 0, nil, err
+	}
+	exp, err := regexp.Compile(r.Rule)
+	if err != nil {
+		return 0, nil, err
+	}
+
+	keys = make([]string, 0, 10)
+
+	err = x.Iterate(new(Package), func(idx int, bean interface{}) error {
+		pkg := bean.(*Package)
+
+		if !exp.MatchString(pkg.ImportPath) {
+			return nil
+		}
+
+		revs, err := pkg.GetRevisions()
+		if err != nil {
+			return fmt.Errorf("error getting revisions(%s): %v", pkg.ImportPath, err)
+		}
+
+		// Delete package archives.
+		ext := archive.GetExtension(pkg.ImportPath)
+		for _, rev := range revs {
+			switch rev.Storage {
+			case QINIU:
+				keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
+			}
+
+			if _, err = x.Id(rev.Id).Delete(new(Revision)); err != nil {
+				return fmt.Errorf("error deleting revision(%s-%s): %v", pkg.ImportPath, rev.Revision, err)
+			}
+		}
+		os.RemoveAll(path.Join(setting.ArchivePath, pkg.ImportPath))
+
+		if setting.ProdMode {
+			if _, err = x.Id(pkg.Id).Delete(new(Package)); err != nil {
+				return fmt.Errorf("error deleting package(%s): %v", pkg.ImportPath, err)
+			}
+		}
+
+		log.Info("[%d] Package blocked: %s", r.Id, pkg.ImportPath)
+
+		count++
+		return nil
+	})
+
+	return count, keys, err
 }

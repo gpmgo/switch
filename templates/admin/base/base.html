@@ -62,6 +62,11 @@
 						  	<a class="item {% if PageIsBlocksList %}active{% endif %}" href="/admin/blocks">Blocks</a>
 						  	<a class="item {% if PageIsBlocksRules %}active{% endif %}" href="/admin/blocks/rules">Rules</a>
 						</div>
+						{% elif PageIsPackages %}
+						<div class="ui secondary pointing menu">
+						  	<a class="item {% if PageIsPackagesList %}active{% endif %}" href="/admin/packages">Revisions</a>
+						  	<a class="item {% if PageIsPackagesLarges %}active{% endif %}" href="/admin/packages/larges">Larges</a>
+						</div>
 						{% endif %}
 
 						{% block body %}{% endblock %}
