@@ -87,11 +87,12 @@ func init() {
 	if com.IsFile("custom/app.ini") {
 		sources = append(sources, "custom/app.ini")
 	}
-	if err := macaron.SetConfig(sources[0], sources[1:]...); err != nil {
+
+	var err error
+	Cfg, err = macaron.SetConfig(sources[0], sources[1:]...)
+	if err != nil {
 		log.Fatal(4, "Fail to set configuration: %v", err)
 	}
-
-	Cfg = macaron.Config()
 
 	AppName = Cfg.Section("").Key("APP_NAME").String()
 

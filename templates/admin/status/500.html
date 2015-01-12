@@ -1,0 +1,10 @@
+{% extends "../base/base.html" %}
+{% block body %}
+<div class="text-center">
+    <p style="margin-top: 80px"><img src="/img/500.png" alt="500"/></p>
+    <hr/>
+    <p>{{Tr(Lang, "status.app_ver")}} {{AppVer}}</p>
+    <p>{{Tr(Lang, "status.report")}} <a href="https://github.com/gpmgo/switch/issues/new">GitHub</a>.</p>
+    <p>{{ErrorMsg}}</p>
+</div>
+{% endblock %}

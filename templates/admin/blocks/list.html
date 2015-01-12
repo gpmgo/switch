@@ -1,3 +1,35 @@
 {% extends "../base/base.html" %}
 {% block body %}
+<table class="ui table">
+	<thead>
+  	<tr>
+      <th>ID</th>
+      <th>Import Path</th>
+      <th>Note</th>
+      <th>Op.</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for b in Blocks %}
+    <tr>
+      <td>{{b.Id}}</td>
+      <td><code>{{b.ImportPath}}</code></td>
+      <td>{{b.Note}}</td>
+      <td>
+        <a href="/admin/blocks/{{b.Id}}/delete"><i class="red trash icon"></i></a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot class="full-width">
+    <tr>
+      <th></th>
+      <th colspan="4">
+        <a class="ui right floated small primary labeled icon button" href="/admin/blocks/new">
+          <i class="content icon"></i> Block Package
+        </a>
+      </th>
+    </tr>
+  </tfoot>
+</table>
 {% endblock %}

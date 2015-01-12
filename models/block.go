@@ -47,29 +47,48 @@ type Block struct {
 }
 
 // BlockPackage blocks given package.
-func BlockPackage(pkg *Package, revs []*Revision, note string) (err error) {
+func BlockPackage(importPath, note string) (keys []string, err error) {
+	pkg, err := GetPakcageByPath(importPath)
+	if err != nil {
+		return nil, err
+	}
+
+	has, err := x.Where("import_path=?", pkg.ImportPath).Get(new(Block))
+	if err != nil {
+		return nil, err
+	} else if has {
+		return nil, nil
+	}
+
 	sess := x.NewSession()
 	defer sess.Close()
 	if err = sess.Begin(); err != nil {
-		return err
+		return nil, err
 	}
 
+	keys = make([]string, 0, 10)
+
+	revs, err := pkg.GetRevisions()
+	if err != nil {
+		return nil, fmt.Errorf("error getting revisions(%s): %v", pkg.ImportPath, err)
+	}
+
+	ext := archive.GetExtension(pkg.ImportPath)
 	for _, rev := range revs {
+		switch rev.Storage {
+		case QINIU:
+			keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
+		}
 		if _, err = sess.Id(rev.Id).Delete(new(Revision)); err != nil {
 			sess.Rollback()
-			return err
+			return nil, err
 		}
 	}
+	os.RemoveAll(path.Join(setting.ArchivePath, pkg.ImportPath))
 
 	if _, err = sess.Id(pkg.Id).Delete(new(Package)); err != nil {
 		sess.Rollback()
-		return err
-	}
-	has, err := x.Where("import_path=?", pkg.ImportPath).Get(new(Block))
-	if err != nil {
-		return err
-	} else if has {
-		return nil
+		return nil, err
 	}
 
 	b := &Block{
@@ -78,16 +97,27 @@ func BlockPackage(pkg *Package, revs []*Revision, note string) (err error) {
 	}
 	if _, err = sess.Insert(b); err != nil {
 		sess.Rollback()
-		return err
+		return nil, err
 	}
 
-	return sess.Commit()
+	return keys, sess.Commit()
+}
+
+// ListBlockedPackages returns a list of block rules with given offset.
+func ListBlockedPackages(offset int) ([]*Block, error) {
+	blocks := make([]*Block, 0, setting.PageSize)
+	return blocks, x.Limit(setting.PageSize, offset).Desc("id").Find(&blocks)
+}
+
+func UnblockPackage(id int64) error {
+	_, err := x.Id(id).Delete(new(Block))
+	return err
 }
 
 // BlockRule represents a rule for blocking packages.
 type BlockRule struct {
 	Id   int64
-	Rule string `xorm:"TEXT"`
+	Rule string `xorm:"UNIQUE"`
 	Note string
 }
 

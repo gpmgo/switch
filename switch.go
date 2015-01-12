@@ -37,7 +37,7 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.6.0.1231"
+const APP_VER = "0.6.1.0112"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
@@ -82,6 +82,8 @@ func main() {
 
 		m.Group("/blocks", func() {
 			m.Get("", admin.Blocks)
+			m.Combo("/new").Get(admin.BlockPackage).Post(admin.BlockPackagePost)
+			m.Get("/:id:int/delete", admin.UnblockPackage)
 
 			m.Group("/rules", func() {
 				m.Get("", admin.BlockRules)

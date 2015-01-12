@@ -27,7 +27,62 @@ import (
 func Blocks(ctx *middleware.Context) {
 	ctx.Data["PageIsBlocks"] = true
 	ctx.Data["PageIsBlocksList"] = true
+
+	blocks, err := models.ListBlockedPackages(0)
+	if err != nil {
+		ctx.Handle(500, "ListBlockedPackages", err)
+		return
+	}
+	ctx.Data["Blocks"] = blocks
+
 	ctx.HTML(200, "blocks/list")
+}
+
+func BlockPackage(ctx *middleware.Context) {
+	ctx.Data["PageIsBlocks"] = true
+	ctx.Data["PageIsBlocksList"] = true
+	ctx.HTML(200, "blocks/new")
+}
+
+func BlockPackagePost(ctx *middleware.Context) {
+	ctx.Data["PageIsBlocks"] = true
+	ctx.Data["PageIsBlocksList"] = true
+
+	keys, err := models.BlockPackage(ctx.Query("import_path"), ctx.Query("note"))
+	if err != nil {
+		if err == models.ErrPackageNotExist {
+			ctx.RenderWithErr(err.Error(), "blocks/new", nil)
+		} else {
+			ctx.Handle(500, "BlockPackage", err)
+		}
+		return
+	}
+
+	if setting.ProdMode {
+		for _, k := range keys {
+			log.Trace("Deleting archive: %s", k)
+			if err = qiniu.DeleteArchive(k); err != nil {
+				log.Error(4, "Fail to delete archive(%s): %v", k, err)
+			}
+			log.Info("Archive deleted: %s", k)
+		}
+	}
+
+	ctx.Flash.Success("New package has been blocked!")
+	ctx.Redirect("/admin/blocks")
+}
+
+func UnblockPackage(ctx *middleware.Context) {
+	ctx.Data["PageIsBlocks"] = true
+	ctx.Data["PageIsBlocksList"] = true
+
+	if err := models.UnblockPackage(ctx.ParamsInt64(":id")); err != nil {
+		ctx.Handle(500, "UnblockPackage", err)
+		return
+	}
+
+	ctx.Flash.Success("Package has been unblocked!")
+	ctx.Redirect("/admin/blocks")
 }
 
 func BlockRules(ctx *middleware.Context) {
