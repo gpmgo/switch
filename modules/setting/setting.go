@@ -97,8 +97,9 @@ func init() {
 	AppName = Cfg.Section("").Key("APP_NAME").String()
 
 	if Cfg.Section("").Key("RUN_MODE").MustString("dev") == "prod" {
-		macaron.Env = macaron.PROD
 		ProdMode = true
+		macaron.Env = macaron.PROD
+		macaron.ColorLog = false
 	}
 
 	HttpPort = Cfg.Section("server").Key("HTTP_PORT").MustInt(8084)
