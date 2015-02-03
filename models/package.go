@@ -282,7 +282,9 @@ func cleanExpireRevesions() {
 				return err
 			}
 			if setting.ProdMode {
-				return qiniu.DeleteArchive(key)
+				if err = qiniu.DeleteArchive(key); err != nil {
+					return err
+				}
 			}
 			log.Info("Revision deleted: %s", key)
 			return nil

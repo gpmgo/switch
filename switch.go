@@ -48,7 +48,12 @@ func main() {
 	log.Info("%s %s", setting.AppName, APP_VER)
 	log.Info("Run Mode: %s", strings.Title(macaron.Env))
 
-	m := macaron.Classic()
+	m := macaron.New()
+	m.Use(macaron.Logger())
+	m.Use(macaron.Recovery())
+	m.Use(macaron.Static("public", macaron.StaticOptions{
+		SkipLogging: true,
+	}))
 	m.Use(pongo2.Pongoers(pongo2.Options{
 		Directory:  "templates/web",
 		IndentJSON: macaron.Env != macaron.PROD,
