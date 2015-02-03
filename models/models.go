@@ -50,12 +50,12 @@ func init() {
 	}
 
 	statistic()
-	cleanExpireRevesions()
 	c := cron.New()
 	c.AddFunc("@every 5m", statistic)
 	c.AddFunc("@every 1h", cleanExpireRevesions)
 	c.Start()
 
+	go cleanExpireRevesions()
 	if setting.ProdMode {
 		go uploadArchives()
 		ticker := time.NewTicker(time.Hour)
