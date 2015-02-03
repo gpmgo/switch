@@ -16,12 +16,18 @@ package models
 
 import (
 	"fmt"
+	"os"
+	"path"
+	"time"
 
+	"github.com/Unknwon/com"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
 	"github.com/robfig/cron"
 
+	"github.com/gpmgo/switch/modules/archive"
 	"github.com/gpmgo/switch/modules/log"
+	"github.com/gpmgo/switch/modules/qiniu"
 	"github.com/gpmgo/switch/modules/setting"
 )
 
@@ -44,9 +50,21 @@ func init() {
 	}
 
 	statistic()
+	cleanExpireRevesions()
 	c := cron.New()
 	c.AddFunc("@every 5m", statistic)
+	c.AddFunc("@every 1h", cleanExpireRevesions)
 	c.Start()
+
+	if setting.ProdMode {
+		go uploadArchives()
+		ticker := time.NewTicker(time.Hour)
+		go func() {
+			for _ = range ticker.C {
+				uploadArchives()
+			}
+		}()
+	}
 }
 
 func Ping() error {
@@ -84,4 +102,72 @@ func statistic() {
 
 	Statistic.PopularPackages = make([]*Package, 0, 15)
 	x.Limit(15).Desc("download_count").Find(&Statistic.PopularPackages)
+}
+
+// uploadArchives checks and uploads local archives to QiNiu.
+func uploadArchives() {
+	revs, err := GetLocalRevisions()
+	if err != nil {
+		log.Error(4, "Fail to get local revisions: %v", err)
+		return
+	}
+
+	// Upload.
+	for _, rev := range revs {
+		pkg, err := GetPakcageById(rev.PkgId)
+		if err != nil {
+			log.Error(4, "Fail to get package by ID(%d): %v", rev.PkgId, err)
+			continue
+		}
+
+		ext := archive.GetExtension(pkg.ImportPath)
+		key := pkg.ImportPath + "-" + rev.Revision + ext
+		localPath := path.Join(pkg.ImportPath, rev.Revision)
+		fpath := path.Join(setting.ArchivePath, localPath+ext)
+
+		// Move.
+		// rsCli := rs.New(nil)
+		// log.Info(key)
+		// err = rsCli.Move(nil, setting.BucketName, pkg.ImportPath+"-"+rev.Revision, setting.BucketName, key)
+		// if err != nil {
+		// 	log.Error(4, rev.Revision)
+		// }
+		// continue
+
+		if !com.IsFile(fpath) {
+			log.Debug("Delete: %v", fpath)
+			DeleteRevisionById(rev.Id)
+			continue
+		}
+
+		// Check archive size.
+		f, err := os.Open(fpath)
+		if err != nil {
+			log.Error(4, "Fail to open file(%s): %v", fpath, err)
+			continue
+		}
+		fi, err := f.Stat()
+		if err != nil {
+			log.Error(4, "Fail to get file info(%s): %v", fpath, err)
+			continue
+		}
+		// Greater then MAX_UPLOAD_SIZE.
+		if fi.Size() > setting.MaxUploadSize<<20 {
+			log.Debug("Ignore large archive: %v", fpath)
+			continue
+		}
+
+		log.Debug("Uploading: %s", localPath)
+		if err = qiniu.UploadArchive(key, fpath); err != nil {
+			log.Error(4, "Fail to upload file(%s): %v", fpath, err)
+			continue
+		}
+		rev.Storage = QINIU
+		if err := UpdateRevision(rev); err != nil {
+			log.Error(4, "Fail to upadte revision(%d): %v", rev.Id, err)
+			continue
+		}
+		os.Remove(fpath)
+		log.Info("Uploaded: %s", localPath)
+	}
 }

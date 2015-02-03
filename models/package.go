@@ -17,15 +17,21 @@ package models
 import (
 	"errors"
 	// "fmt"
+	"os"
+	"path"
 	"strings"
 	"time"
 
 	"github.com/Unknwon/com"
 
 	"github.com/gpmgo/switch/modules/archive"
+	"github.com/gpmgo/switch/modules/log"
+	"github.com/gpmgo/switch/modules/qiniu"
+	"github.com/gpmgo/switch/modules/setting"
 )
 
 var (
+	ErrRevisionIsLocal  = errors.New("Revision archive is in local")
 	ErrPackageNotExist  = errors.New("Package does not exist")
 	ErrRevisionNotExist = errors.New("Revision does not exist")
 )
@@ -40,11 +46,31 @@ const (
 // Revision represents a revision of a Go package.
 type Revision struct {
 	Id       int64
-	PkgId    int64  `xorm:"UNIQUE(s)"`
-	Revision string `xorm:"UNIQUE(s)"`
+	PkgId    int64    `xorm:"UNIQUE(s)"`
+	Pkg      *Package `xorm:"-"`
+	Revision string   `xorm:"UNIQUE(s)"`
 	Storage
 	Size    int64
 	Updated time.Time `xorm:"UPDATED"`
+}
+
+func (r *Revision) GetPackage() (err error) {
+	if r.Pkg != nil {
+		return nil
+	}
+	r.Pkg, err = GetPakcageById(r.PkgId)
+	return err
+}
+
+// KeyName returns QiNiu key name.
+func (r *Revision) KeyName() (string, error) {
+	if r.Storage == LOCAL {
+		return "", ErrRevisionIsLocal
+	}
+	if err := r.GetPackage(); err != nil {
+		return "", err
+	}
+	return r.Pkg.ImportPath + "-" + r.Revision + archive.GetExtension(r.Pkg.ImportPath), nil
 }
 
 // GetRevision returns revision by given pakcage ID and revision.
@@ -226,4 +252,46 @@ func SearchPackages(keys string) ([]*Package, error) {
 	pkgs := make([]*Package, 0, 50)
 	err := x.Limit(50).Where("name like '%" + keys + "%'").Find(&pkgs)
 	return pkgs, err
+}
+
+const _EXPIRE_DURATION = -1 * 24 * 30 * 3 * time.Hour
+
+func cleanExpireRevesions() {
+	if err := x.Where("updated<?", time.Now().Add(_EXPIRE_DURATION)).
+		Iterate(new(Revision), func(idx int, bean interface{}) (err error) {
+		rev := bean.(*Revision)
+		if err = rev.GetPackage(); err != nil {
+			return err
+		}
+
+		if _, err = x.Id(rev.Id).Delete(new(Revision)); err != nil {
+			return err
+		}
+
+		ext := archive.GetExtension(rev.Pkg.ImportPath)
+		fpath := path.Join(setting.ArchivePath, rev.Pkg.ImportPath, rev.Revision+ext)
+
+		switch rev.Storage {
+		case LOCAL:
+			os.Remove(fpath)
+			log.Info("Revision deleted: %s", fpath)
+			return nil
+		case QINIU:
+			key, err := rev.KeyName()
+			if err != nil {
+				return err
+			}
+			if setting.ProdMode {
+				return qiniu.DeleteArchive(key)
+			}
+			log.Info("Revision deleted: %s", key)
+			return nil
+		default:
+			return nil
+		}
+
+		return nil
+	}); err != nil {
+		log.Error(4, "Fail to clean expire revisions: %v", err)
+	}
 }
