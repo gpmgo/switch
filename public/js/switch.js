@@ -1,20 +1,18 @@
 $(document).ready(
-	function() {
-		$('#search-box').keydown(function(event) { 
-			if (event.keyCode == 13) {
-				window.location.href = '/search?q=' + $('#search-box').val();
-			}
-		});
-		
-		$('.ui.dropdown').dropdown();
-		$('.content.popup').popup();
+    function () {
+        $('#search-box').keydown(function (event) {
+            if (event.keyCode == 13) {
+                window.location.href = '/search?q=' + $('#search-box').val();
+            }
+        });
 
-		$(".click-select").click(function(){
-			$(this).select();
-		});
+        $('.ui.dropdown').dropdown();
+        $('.content.popup').popup();
 
-		$('.ui.modal')
-		  .modal('show')
-		;
-	}
-)
+        $(".click-select").click(function () {
+            $(this).select();
+        });
+
+        $('.ui.modal').modal('show');
+    }
+);

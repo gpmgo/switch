@@ -4,9 +4,9 @@
 	<div class="container">
 		<div class="row">
 	    	<div class="col-md-9 brand">
-	      		<h1 class="ui header">
-	      			<a href="/">{{Tr(Lang, "app_title")}}</a>
-				</h1>
+      		<h1 class="ui header">
+      			<a href="/">{{Tr(Lang, "app_title")}}</a>
+					</h1>
 				<h4>{{Tr(Lang, "app_site_desc")}}</h4>
 			</div>
 			<div class="col-md-3" id="download-btn-section">
@@ -27,8 +27,8 @@
 <div class="row">
 	<div class="col-md-4">
 		<h3 class="ui header">
-		  	<i class="archive icon"></i>
-		  	{{Tr(Lang, "home.packages")}}
+	  	<i class="archive icon"></i>
+	  	{{Tr(Lang, "home.packages")}}
 		</h3>
 		<div>
 			<h1 class="number">{{Stats.NumPackages}}</h1>
@@ -37,18 +37,18 @@
 	</div>
 	<div class="col-md-4">
 		<h3 class="ui header">
-		  	<i class="user icon"></i>
-		  	{{Tr(Lang, "home.users")}}
+      <i class="user icon"></i>
+      {{Tr(Lang, "home.users")}}
 		</h3>
 		<div>
-			<h1 class="number">{{Stats.NumDownloaders}}</h1> 
+			<h1 class="number">{{Stats.NumDownloaders}}</h1>
 			<p class="stat">{{Tr(Lang, "home.user_num_unit")}}</p>
 		</div>
 	</div>
 	<div class="col-md-4">
 		<h3 class="ui header">
-		  	<i class="browser icon"></i>
-		  	{{Tr(Lang, "home.activity")}}
+      <i class="browser icon"></i>
+      {{Tr(Lang, "home.activity")}}
 		</h3>
 		<div>
 			<h1 class="number">{{Stats.DownloadStats.NumTotalDownload}}</h1>
@@ -72,10 +72,10 @@
 			{% for p in pkgs%}
 		  	<div class="item">
 			    <div class="content popup" data-content="{{p.ImportPath}}">
-			      	<div class="header">
-			      		<span class="ui green label">{% if recent %}{{p.RecentDownload}}{% else %}{{p.DownloadCount}}{% endif %}</span>
-			      		<a href="/{{p.ImportPath}}">{{SubStr(p.ImportPath, 0, 30)}}</a>
-			      	</div>
+            <div class="header">
+              <span class="ui green label">{% if recent %}{{p.RecentDownload}}{% else %}{{p.DownloadCount}}{% endif %}</span>
+              <a href="/{{p.ImportPath}}">{{SubStr(p.ImportPath, 0, 30)}}</a>
+            </div>
 			    </div>
 		    </div>
 			{% endfor %}

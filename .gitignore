@@ -7,3 +7,5 @@ data/
 public/VERSION.json
 switch.sublime-project
 switch.sublime-workspace
+.idea
+config.codekit
