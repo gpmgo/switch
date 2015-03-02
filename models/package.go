@@ -294,6 +294,6 @@ func cleanExpireRevesions() {
 
 		return nil
 	}); err != nil {
-		log.Error(4, "Fail to clean expire revisions: %v", err)
+		log.Error(3, "Fail to clean expire revisions: %v", err)
 	}
 }
