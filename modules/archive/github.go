@@ -41,7 +41,7 @@ func getGithubRevision(client *http.Client, n *Node) error {
 		return fmt.Errorf("fail to get revision(%s): %v", n.ImportPath, err)
 	}
 
-	i := bytes.Index(data, []byte(`button-outline`))
+	i := bytes.Index(data, []byte(`btn-outline`))
 	if i == -1 {
 		return fmt.Errorf("cannot find locater in page: %s", n.ImportPath)
 	}
