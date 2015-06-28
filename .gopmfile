@@ -2,18 +2,18 @@
 path = github.com/gpmgo/switch
 
 [deps]
-github.com/Unknwon/com = 
-github.com/Unknwon/goconfig = 
-github.com/Unknwon/i18n = 
-github.com/Unknwon/macaron = 
-github.com/go-sql-driver/mysql = 
-github.com/go-xorm/xorm = 
-github.com/macaron-contrib/cache = 
-github.com/macaron-contrib/i18n = 
-github.com/macaron-contrib/session = 
-github.com/macaron-contrib/toolbox = 
-github.com/qiniu/api = 
-gopkg.in/go-fsnotify/fsnotify.v1 = 
+github.com/Unknwon/com =
+github.com/Unknwon/goconfig =
+github.com/Unknwon/i18n =
+github.com/Unknwon/macaron =
+github.com/go-sql-driver/mysql =
+github.com/go-xorm/xorm =
+github.com/macaron-contrib/cache =
+github.com/macaron-contrib/i18n =
+github.com/macaron-contrib/session =
+github.com/macaron-contrib/toolbox =
+github.com/qiniu/api.v6 =
+gopkg.in/go-fsnotify/fsnotify.v1 =
 
 [res]
 include = templates|public|conf
