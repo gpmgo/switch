@@ -50,18 +50,14 @@
 		<div id="registry">
 			<noscript>Please enable JavaScript in your browser!</noscript>
 			{% block brand %}{% endblock %}
-			<div class="container">
-				<div class="row">	
-					<div class="col-md-12">
-						{% block body %}{% endblock %}
-					</div>
-				</div>
+			<div class="ui page grid">
+				{% block body %}{% endblock %}
 			</div>
 
 			<div class="footer">
 				<div class="ui divider"></div>
 				<div class="ui page grid">
-					<div class="sixteen wide aligned centered column">
+					<div class="fourteen wide aligned centered column">
 						<div class="ui stackable four column grid">
 							<div class="column">
 								<h5>{{Tr(Lang, "follow_us")}}</h5>
@@ -96,11 +92,9 @@
 					</div>
 				</div>
 				<br>	
-				<div class="row">
 					<p class="copyright">
 						Copyright © 2015 Go Package Manager
 					</p>
-				</div>
 			</div>
 		</div>
 	</body>

@@ -6,22 +6,23 @@ body {
     font-size: 15px;
     background-color: white;
 }
-.brand h1 a {
-    color: rgb(51, 51, 51);
+.brand {
+    padding-bottom: 20px!important;
+    h1 a {
+        color: rgb(51, 51, 51);
+        &:hover {
+            color: rgb(15, 15, 15);
+            text-decoration: none;
+        }
+    }
+    h4 {
+        margin-top: 0;
+    }
 }
-.brand h1 a:hover {
-    color: rgb(15, 15, 15);
-    text-decoration: none;
-}
-.brand h4 {
-    margin-top: 0;
-}
-#registry > .segment {
+#registry {
     margin: 0px 0px 3em;
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding-top: 70px;
     background-color: #FFFFFF;
-    border-bottom: 1px solid #DDDDDD;
 }
 .carbonad {
     display: block;
@@ -54,6 +55,9 @@ body {
 }
 .login-panel {
     padding-top: 15px;
+}
+.ui.dividing.header {
+    padding-top: 30px;
 }
 .number {
     font-size: 4em;
@@ -99,5 +103,6 @@ code {
     float: right;
 }
 #download-btn-section {
+    margin-top: 20px;
     padding: 10px;
 }
