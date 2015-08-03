@@ -1,35 +1,37 @@
 {% extends "base/base.html" %}
 {% block body %}
-<h2 class="ui dividing header">
-	{{Tr(Lang, "download.download")}}
-	<div class="sub header">{{Tr(Lang, "download.download_helper")}}</div>
-</h2>
-<form action="/download" method="post">
-	<div class="ui {% if Flash.ErrorMsg %}error {% endif %}form">
-		{% if Lang == "zh-CN" %}
-		<h4>我们使用七牛云存储作为 CDN 来为您在天朝局域网的下载加速。</h4>
-		{% endif %}
-		{% include "base/alert.html" %}
-	  	<div class="{% if Err_PkgName %}error{% endif %} field">
-	    	<label>
-	    		{{Tr(Lang, "download.import_path")}}
-	    		<i class="red asterisk icon"></i>
-	    	</label>
-    		<div class="ui icon input">
-	      		<input name="pkgname" placeholder="{{Tr(Lang, "download.import_path_helper")}}" value="{{pkgname}}" required>
-	      		<i class="code icon"></i>
-      		</div>
-	  	</div>
-	  	<div class="{% if Err_Revision %}error{% endif %} field">
-	    	<label>
-	    		{{Tr(Lang, "download.revision")}}
-	    	</label>
-    		<div class="ui icon input">
-	      		<input name="revision" placeholder="{{Tr(Lang, "download.revision_helper")}}" value="{{revision}}">
-	      		<i class="tag icon"></i>
-	      	</div>
-	  	</div>
-	  	<button class="ui blue submit button" type="submit">{{Tr(Lang, "download.download_now")}}</button>
-	</div>
-</form>
+<div class="sixteen wide aligned centered column">
+	<h2 class="ui dividing header">
+		{{Tr(Lang, "download.download")}}
+		<div class="sub header">{{Tr(Lang, "download.download_helper")}}</div>
+	</h2>
+	<form action="/download" method="post">
+		<div class="ui {% if Flash.ErrorMsg %}error {% endif %}form">
+			{% if Lang == "zh-CN" %}
+			<h4>我们使用七牛云存储作为 CDN 来为您在天朝局域网的下载加速。</h4>
+			{% endif %}
+			{% include "base/alert.html" %}
+		  	<div class="{% if Err_PkgName %}error{% endif %} field">
+		    	<label>
+		    		{{Tr(Lang, "download.import_path")}}
+		    		<i class="red asterisk icon"></i>
+		    	</label>
+	    		<div class="ui icon input">
+		      		<input name="pkgname" placeholder="{{Tr(Lang, "download.import_path_helper")}}" value="{{pkgname}}" required>
+		      		<i class="code icon"></i>
+	      		</div>
+		  	</div>
+		  	<div class="{% if Err_Revision %}error{% endif %} field">
+		    	<label>
+		    		{{Tr(Lang, "download.revision")}}
+		    	</label>
+	    		<div class="ui icon input">
+		      		<input name="revision" placeholder="{{Tr(Lang, "download.revision_helper")}}" value="{{revision}}">
+		      		<i class="tag icon"></i>
+		      	</div>
+		  	</div>
+		  	<button class="ui blue submit button" type="submit">{{Tr(Lang, "download.download_now")}}</button>
+		</div>
+	</form>
+</div>
 {% endblock %}
