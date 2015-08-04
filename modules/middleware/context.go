@@ -84,6 +84,7 @@ func (ctx *Context) Handle(status int, title string, err error) {
 		}
 	}
 
+	ctx.Data["IsStatusPage"] = true
 	switch status {
 	case 404:
 		ctx.Data["Title"] = "Page Not Found"

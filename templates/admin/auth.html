@@ -1,18 +1,14 @@
 {% extends "base/base.html" %}
 {% block body %}
-<div class="ui three column grid">
-	<div class="column"></div>
-	<div class="column">
-		<form action="/admin/auth" method="post">
-			<h3>What is my name?</h3>
-			<div class="ui form">
-					
-			    <div class="field">
-			    	<input name="token" required>
-			  	</div>
-			  	<button class="ui primary button">Boom!</button>
-			</div>
-		</form>
-	</div>
+<div class="sixteen wide aligned centered column status page">
+	<form action="/admin/auth" method="post">
+		<h4>What is my name?</h4>
+		<div class="ui form">
+		    <div class="inline field">
+		    	<input name="token" required>
+		  	</div>
+		  	<button class="ui primary button">Boom!</button>
+		</div>
+	</form>
 </div>
 {% endblock %}

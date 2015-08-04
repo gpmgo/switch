@@ -1,8 +1,8 @@
 {% extends "../base/base.html" %}
 {% block body %}
-<div class="text-center">
-	<p style="margin-top: 80px"><img src="/img/404.png" alt="404"/></p>
-    <hr/>
+<div class="sixteen wide aligned centered column status page">
+	<p><img src="/img/404.png" /></p>
+    <div class="ui divider"></div>
     <p>{{Tr(Lang, "status.app_ver")}} {{AppVer}}</p>
     <p>{{Tr(Lang, "status.report")}} <a href="https://github.com/gpmgo/switch/issues/new">GitHub</a>.</p>
 </div>

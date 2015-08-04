@@ -3,46 +3,41 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 		<link rel="shortcut icon" href="/img/favicon.png" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-        <meta name="author" content="Gopm - Go Package Manager" />
-		<meta name="description" content="Go Package Manager Registry Server" />
-		<meta name="keywords" content="gopm, Go, Golang, package manage, registry">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
 		<meta name="_csrf" content="{{CsrfToken}}" />
 
 		 <!-- Stylesheets -->
-		<link rel="stylesheet" href="/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/css/semantic.min.css" />
-		<link rel="stylesheet" href="/css/switch.css" />
+		<link rel="stylesheet" href="/css/semantic.min.css?v={{AppVer}}" />
+		<link rel="stylesheet" href="/css/switch.min.css?v={{AppVer}}" />
 
-		<script src="http://cdn.staticfile.org/jquery/1.11.1/jquery.min.js"></script>
-		<script type="text/javascript" src="/js/semantic.min.js"></script>
-		<script type="text/javascript" src="/js/switch.js"></script>
+		<script type="text/javascript" src="/js/jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="/js/semantic.min.js?v={{AppVer}}"></script>
+		<script type="text/javascript" src="/js/switch.js?v={{AppVer}}"></script>
 
 		<title>{% if Title %}{{Title}} - {% endif %}{{Tr(Lang, "app_title")}}</title>
 	</head>
 	<body>
-		{% if !PageIsAuth %}
-		<div class="ui menu">
-			<div class="container">
-				<div class="menu">
-				  	<a class="item {% if PageIsDashboard %}active{% endif %}" href="/admin">
-				    	<i class="dashboard icon"></i> Dashboard
-				  	</a>
-				  	<div class="right menu">
-					  	<a class="item" href="/">
-					    	<i class="mail forward icon"></i> Back To Site
-					  	</a>
-					</div>
-			  	</div>
-			</div>
-		</div>
-		{% endif %}
-		<div>
-			<div class="container">			
+		<div class="ui padded grid">
+				{% if !PageIsAuth and !IsStatusPage %}
 				<div class="row">
-					{% if !PageIsAuth %}
-					<div class="col-md-3">
+					<div class="ui fixed menu">
+						<div class="menu">
+						  	<a class="item {% if PageIsDashboard %}active{% endif %}" href="/admin">
+						    	<i class="dashboard icon"></i> Dashboard
+						  	</a>
+						  	<div class="right menu">
+							  	<a class="item" href="/">
+							    	<i class="mail forward icon"></i> Back To Site
+							  	</a>
+							</div>
+					  </div>
+					</div>
+				</div>
+				{% endif %}
+				<div class="row body">
+					{% if !PageIsAuth and !IsStatusPage %}
+					<div class="three wide column">
 						<div class="ui vertical menu">
 						  	<a class="item {% if PageIsDashboard %}active{% endif %}" href="/admin">
 						    Dashboard
@@ -56,7 +51,8 @@
 						</div>
 					</div>
 					{% endif %}
-					<div class="col-md-9">
+					<div class="{% if !IsStatusPage and !PageIsAuth %}thirteen{% else %}sixteen{% endif %} wide column">
+						{% if !IsStatusPage %}
 						{% if PageIsBlocks %}
 						<div class="ui secondary pointing menu">
 						  	<a class="item {% if PageIsBlocksList %}active{% endif %}" href="/admin/blocks">Blocks</a>
@@ -68,17 +64,17 @@
 						  	<a class="item {% if PageIsPackagesLarges %}active{% endif %}" href="/admin/packages/larges">Larges</a>
 						</div>
 						{% endif %}
+						{% endif %}
 
 						{% block body %}{% endblock %}
 					</div>
-				</div>
-			</div>
-			<div class="footer">
-				<div class="container">
-					<div class="row">
-						<p class="copyright">
-							Copyright © 2014 Go Package Manager
-						</p>
+
+					<div class="footer">
+						<div class="sixteen wide aligned centered column status page">
+							<p class="copyright">
+								Copyright © 2015 Go Package Manager
+							</p>
+						</div>
 					</div>
 				</div>
 			</div>
