@@ -114,7 +114,7 @@ var (
 	}
 	revServices = []*revService{
 		{"github.com/", getGithubRevision},
-		{"code.google.com/", getGoogleRevision},
+		{"code.google.com/", getGolangRevision},
 		{"golang.org/x/", getGolangRevision},
 		{"bitbucket.org/", getBitbucketRevision},
 		{"gopkg.in/", getGopkgRevision},

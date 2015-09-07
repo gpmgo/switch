@@ -30,7 +30,6 @@ var (
 	googleRevisionPattern = regexp.MustCompile(`_setViewedRevision\('[a-z0-9A-Z]+`)
 	googleRepoRe          = regexp.MustCompile(`id="checkoutcmd">(hg|git|svn)`)
 	googlePattern         = regexp.MustCompile(`^code\.google\.com/p/(?P<repo>[a-z0-9\-]+)(:?\.(?P<subrepo>[a-z0-9\-]+))?(?P<dir>/[a-z0-9A-Z_.\-/]+)?$`)
-	golangPattern         = regexp.MustCompile(`^golang\.org/x/(?P<subrepo>[a-z0-9\-]+)?(?P<dir>/[a-z0-9A-Z_.\-/]+)?$`)
 )
 
 func setupGoogleMatch(match map[string]string) {
@@ -96,46 +95,6 @@ func getGoogleRevision(client *http.Client, n *Node) error {
 	return nil
 }
 
-func getGolangRevision(client *http.Client, n *Node) error {
-	match := map[string]string{}
-	{
-		m := golangPattern.FindStringSubmatch(n.ImportPath)
-		for i, n := range golangPattern.SubexpNames() {
-			if n != "" {
-				match[n] = m[i]
-			}
-		}
-		setupGoogleMatch(match)
-	}
-	match["repo"] = "go"
-
-	if len(n.Value) == 0 {
-		// Scrape the HTML project page to find the VCS.
-		p, err := com.HttpGetBytes(client, com.Expand("http://code.google.com/p/{repo}/source/checkout", match), nil)
-		if err != nil {
-			return fmt.Errorf("fail to fetch page: %v", err)
-		}
-		m := googleRepoRe.FindSubmatch(p)
-		if m == nil {
-			return fmt.Errorf("cannot find VCS on Google Code project page")
-		}
-		match["vcs"] = string(m[1])
-		n.Value = defaultTags[match["vcs"]]
-	}
-	match["tag"] = n.Value
-	data, err := com.HttpGetBytes(client, com.Expand("http://code.google.com/p/{repo}/source/browse/?repo={subrepo}&r={tag}", match), nil)
-	if err != nil {
-		return fmt.Errorf("fail to get revision(%s): %v", n.ImportPath, err)
-	}
-	m := googleRevisionPattern.FindSubmatch(data)
-	if m == nil {
-		return fmt.Errorf("cannot find revision in page: %s", n.ImportPath)
-	}
-	n.Revision = strings.TrimPrefix(string(m[0]), `_setViewedRevision('`)
-	n.ArchivePath = path.Join(setting.ArchivePath, n.ImportPath, n.Revision+".zip")
-	return nil
-}
-
 func getGoogleArchive(client *http.Client, match map[string]string, n *Node) error {
 	setupGoogleMatch(match)
 	match["tag"] = n.Revision
@@ -150,9 +109,4 @@ func getGoogleArchive(client *http.Client, match map[string]string, n *Node) err
 		}
 	}
 	return nil
-}
-
-func getGolangArchive(client *http.Client, match map[string]string, n *Node) error {
-	match["repo"] = "go"
-	return getGoogleArchive(client, match, n)
 }

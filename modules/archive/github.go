@@ -30,6 +30,7 @@ import (
 var (
 	githubRevisionPattern = regexp.MustCompile(`data-clipboard-text="[a-z0-9A-Z]+`)
 	githubPattern         = regexp.MustCompile(`^github\.com/(?P<owner>[a-z0-9A-Z_.\-]+)/(?P<repo>[a-z0-9A-Z_.\-]+)(?P<dir>/[a-z0-9A-Z_.\-/]*)?$`)
+	golangPattern         = regexp.MustCompile(`^golang\.org/x/(?P<repo>[a-z0-9\-]+)?(?P<dir>/[a-z0-9A-Z_.\-/]+)?$`)
 )
 
 func getGithubRevision(client *http.Client, n *Node) error {
@@ -69,4 +70,23 @@ func getGithubArchive(client *http.Client, match map[string]string, n *Node) err
 		return fmt.Errorf("fail to download archive(%s): %v", n.ImportPath, err)
 	}
 	return nil
+}
+
+func getGolangRevision(client *http.Client, n *Node) error {
+	var cn Node
+	cn = *n
+	cn.ImportPath = "github.com/golang" + strings.TrimPrefix(cn.ImportPath, "golang.org/x")
+
+	if err := getGithubRevision(client, &cn); err != nil {
+		return err
+	}
+
+	n.Revision = cn.Revision
+	n.ArchivePath = path.Join(setting.ArchivePath, n.ImportPath, n.Revision+".zip")
+	return nil
+}
+
+func getGolangArchive(client *http.Client, match map[string]string, n *Node) error {
+	match["owner"] = "golang"
+	return getGithubArchive(client, match, n)
 }
