@@ -16,7 +16,7 @@ package models
 
 import (
 	"errors"
-	"fmt"
+	// "fmt"
 	"os"
 	"path"
 	"strings"
@@ -199,7 +199,7 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 		}
 	}
 
-	return nil, fmt.Errorf("Revision: %s", n.Revision)
+	// return nil, fmt.Errorf("Revision: %s", n.Revision)
 
 	if r == nil || (r.Storage == LOCAL && !com.IsFile(n.ArchivePath)) {
 		if err := n.Download(); err != nil {
