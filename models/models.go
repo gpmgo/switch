@@ -22,6 +22,7 @@ import (
 
 	"github.com/Unknwon/com"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-xorm/core"
 	"github.com/go-xorm/xorm"
 	"github.com/robfig/cron"
 
@@ -46,9 +47,13 @@ func init() {
 		log.Fatal(4, "Fail to init new engine: %v", err)
 	}
 
-	x.SetLogger(nil)
+	x.SetMapper(core.GonicMapper{})
 
-	if err = x.Sync(new(Package), new(Revision), new(Downloader),
+	if setting.ProdMode {
+		x.SetLogger(nil)
+	}
+
+	if err = x.Sync2(new(Package), new(Revision), new(Downloader),
 		new(Block), new(BlockRule)); err != nil {
 		log.Fatal(4, "Fail to sync database: %v", err)
 	}
@@ -118,9 +123,9 @@ func uploadArchives() {
 
 	// Upload.
 	for _, rev := range revs {
-		pkg, err := GetPakcageById(rev.PkgId)
+		pkg, err := GetPakcageByID(rev.PkgID)
 		if err != nil {
-			log.Error(4, "Fail to get package by ID(%d): %v", rev.PkgId, err)
+			log.Error(4, "Fail to get package by ID(%d): %v", rev.PkgID, err)
 			continue
 		}
 
@@ -140,7 +145,7 @@ func uploadArchives() {
 
 		if !com.IsFile(fpath) {
 			log.Debug("Delete: %v", fpath)
-			DeleteRevisionById(rev.Id)
+			DeleteRevisionById(rev.ID)
 			continue
 		}
 
@@ -168,7 +173,7 @@ func uploadArchives() {
 		}
 		rev.Storage = QINIU
 		if err := UpdateRevision(rev); err != nil {
-			log.Error(4, "Fail to upadte revision(%d): %v", rev.Id, err)
+			log.Error(4, "Fail to upadte revision(%d): %v", rev.ID, err)
 			continue
 		}
 		os.Remove(fpath)

@@ -23,10 +23,10 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/Unknwon/macaron"
-	"github.com/macaron-contrib/i18n"
-	"github.com/macaron-contrib/pongo2"
-	"github.com/macaron-contrib/session"
+	"github.com/go-macaron/i18n"
+	"github.com/go-macaron/pongo2"
+	"github.com/go-macaron/session"
+	"gopkg.in/macaron.v1"
 
 	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/middleware"
@@ -37,7 +37,7 @@ import (
 	"github.com/gpmgo/switch/routers/api/v1"
 )
 
-const APP_VER = "0.6.5.0804"
+const APP_VER = "0.7.0.1106"
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU())

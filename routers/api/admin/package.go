@@ -54,7 +54,7 @@ func ListLargeRevisions(ctx *middleware.Context) {
 
 	largeRevs := make([]*ApiRevesion, 0, len(revs)/2)
 	for _, rev := range revs {
-		pkg, err := models.GetPakcageById(rev.PkgId)
+		pkg, err := models.GetPakcageByID(rev.PkgId)
 		if err != nil {
 			ctx.JSON(500, map[string]string{
 				"error": fmt.Sprintf("fail to get package by ID(%d): %v", rev.PkgId, err),
@@ -109,7 +109,7 @@ func ListLargeRevisions(ctx *middleware.Context) {
 
 func BlockPackage(ctx *middleware.Context) {
 	id := ctx.QueryInt64("id")
-	pkg, err := models.GetPakcageById(id)
+	pkg, err := models.GetPakcageByID(id)
 	if err != nil {
 		if err == models.ErrPackageNotExist {
 			ctx.JSON(404, map[string]string{

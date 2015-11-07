@@ -15,12 +15,13 @@
 package setting
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Unknwon/com"
-	"github.com/Unknwon/macaron"
 	"github.com/qiniu/api.v6/conf"
 	"gopkg.in/ini.v1"
+	"gopkg.in/macaron.v1"
 
 	"github.com/gpmgo/switch/modules/log"
 )
@@ -81,8 +82,6 @@ var Service struct {
 }
 
 func init() {
-	log.NewLogger(0, "console", `{"level": 0}`)
-
 	sources := []interface{}{"conf/app.ini"}
 	if com.IsFile("custom/app.ini") {
 		sources = append(sources, "custom/app.ini")
@@ -96,11 +95,15 @@ func init() {
 
 	AppName = Cfg.Section("").Key("APP_NAME").String()
 
+	logLevel := 0
 	if Cfg.Section("").Key("RUN_MODE").MustString("dev") == "prod" {
 		ProdMode = true
 		macaron.Env = macaron.PROD
 		macaron.ColorLog = false
+		logLevel = 2
 	}
+
+	log.NewLogger(0, "console", fmt.Sprintf(`{"level": %d}`, logLevel))
 
 	HttpPort = Cfg.Section("server").Key("HTTP_PORT").MustInt(8084)
 	ArchivePath = Cfg.Section("server").Key("ARCHIVE_PATH").MustString("data/archives")

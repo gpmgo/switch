@@ -1,5 +1,4 @@
-Switch
-======
+# Switch
 
 Switch is a server that provides versioning caching and delivering Go packages service.
 

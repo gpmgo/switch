@@ -20,10 +20,12 @@ import (
 	"net/http"
 	"path"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/Unknwon/com"
 
+	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/setting"
 )
 
@@ -49,13 +51,11 @@ func getGopkgRevision(client *http.Client, n *Node) error {
 		m[3] = "master"
 	}
 
+	reqURL := "https://" + n.DownloadURL + ".git/info/refs?service=git-upload-pack"
+	log.Trace("Request URL: %s", reqURL)
+
 	// Parse revision SHA by tag.
-	req, err := http.NewRequest("GET", "https://"+n.DownloadURL+".git/info/refs?service=git-upload-pack", nil)
-	if err != nil {
-		return fmt.Errorf("fail to make refs request: %v", err)
-	}
-	req.Header.Set("User-Agent", com.UserAgent)
-	resp, err := client.Do(req)
+	resp, err := http.Get(reqURL)
 	if err != nil {
 		return fmt.Errorf("fail to get response of refs: %v", err)
 	}
@@ -67,17 +67,27 @@ func getGopkgRevision(client *http.Client, n *Node) error {
 	branchRef := "refs/heads/" + m[3]
 	tagRef := "refs/tags/" + m[3]
 	lines := strings.Split(string(data), "\n")
-	for _, line := range lines[2 : len(lines)-1] {
+
+	// Sort out all references and find the most latest and relevent one.
+	candidates := make([]string, 0, 3)
+	revisions := make(map[string]string)
+	for _, line := range lines {
 		if !strings.Contains(line, branchRef) && !strings.Contains(line, tagRef) {
 			continue
 		}
-		n.Revision = line[4:44]
-		break
+		log.Trace(line)
+		refName := strings.TrimSuffix(line[45:], "^{}")
+		candidates = append(candidates, refName)
+		revisions[refName] = line[4:44]
 	}
 
-	if len(n.Revision) == 0 {
+	if len(candidates) == 0 {
 		return fmt.Errorf("cannot find revision in page: %s", n.ImportPath)
 	}
+
+	sort.Strings(candidates)
+
+	n.Revision = revisions[candidates[len(candidates)-1]]
 	n.ArchivePath = path.Join(setting.ArchivePath, n.ImportPath, n.Revision+".zip")
 	return nil
 }

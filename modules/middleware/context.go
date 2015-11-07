@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/Unknwon/macaron"
-	"github.com/macaron-contrib/session"
+	"github.com/go-macaron/session"
+	"gopkg.in/macaron.v1"
 
 	"github.com/gpmgo/switch/modules/base"
 	"github.com/gpmgo/switch/modules/log"

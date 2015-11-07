@@ -16,7 +16,7 @@ package models
 
 import (
 	"errors"
-	// "fmt"
+	"fmt"
 	"os"
 	"path"
 	"strings"
@@ -45,8 +45,8 @@ const (
 
 // Revision represents a revision of a Go package.
 type Revision struct {
-	Id       int64
-	PkgId    int64    `xorm:"UNIQUE(s)"`
+	ID       int64    `xorm:"pk autoincr"`
+	PkgID    int64    `xorm:"UNIQUE(s)"`
 	Pkg      *Package `xorm:"-"`
 	Revision string   `xorm:"UNIQUE(s)"`
 	Storage
@@ -58,7 +58,7 @@ func (r *Revision) GetPackage() (err error) {
 	if r.Pkg != nil {
 		return nil
 	}
-	r.Pkg, err = GetPakcageById(r.PkgId)
+	r.Pkg, err = GetPakcageByID(r.PkgID)
 	return err
 }
 
@@ -74,9 +74,9 @@ func (r *Revision) KeyName() (string, error) {
 }
 
 // GetRevision returns revision by given pakcage ID and revision.
-func GetRevision(pkgId int64, rev string) (*Revision, error) {
+func GetRevision(pkgID int64, rev string) (*Revision, error) {
 	r := &Revision{
-		PkgId:    pkgId,
+		PkgID:    pkgID,
 		Revision: rev,
 	}
 	has, err := x.Get(r)
@@ -90,7 +90,7 @@ func GetRevision(pkgId int64, rev string) (*Revision, error) {
 
 // UpdateRevision updates revision information.
 func UpdateRevision(rev *Revision) error {
-	_, err := x.Id(rev.Id).Update(rev)
+	_, err := x.Id(rev.ID).Update(rev)
 	return err
 }
 
@@ -116,7 +116,7 @@ func GetRevisionsByPkgId(pkgId int64) ([]*Revision, error) {
 
 // Package represents a Go package.
 type Package struct {
-	Id             int64
+	ID             int64  `xorm:"pk autoincr"`
 	ImportPath     string `xorm:"UNIQUE"`
 	Description    string
 	Homepage       string
@@ -128,7 +128,7 @@ type Package struct {
 }
 
 func (pkg *Package) GetRevisions() ([]*Revision, error) {
-	return GetRevisionsByPkgId(pkg.Id)
+	return GetRevisionsByPkgId(pkg.ID)
 }
 
 // NewPackage creates
@@ -142,10 +142,10 @@ func NewPackage(importPath string) (*Package, error) {
 	return pkg, nil
 }
 
-// GetPakcageById returns a package by given ID.
-func GetPakcageById(pkgId int64) (*Package, error) {
+// GetPakcageByID returns a package by given ID.
+func GetPakcageByID(pkgID int64) (*Package, error) {
 	pkg := &Package{}
-	has, err := x.Id(pkgId).Get(pkg)
+	has, err := x.Id(pkgID).Get(pkg)
 	if err != nil {
 		return nil, err
 	} else if !has {
@@ -193,13 +193,13 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 
 	var r *Revision
 	if pkg != nil {
-		r, err = GetRevision(pkg.Id, n.Revision)
+		r, err = GetRevision(pkg.ID, n.Revision)
 		if err != nil && err != ErrRevisionNotExist {
 			return nil, err
 		}
 	}
 
-	// return nil, fmt.Errorf("Revision: %s", n.Revision)
+	return nil, fmt.Errorf("Revision: %s", n.Revision)
 
 	if r == nil || (r.Storage == LOCAL && !com.IsFile(n.ArchivePath)) {
 		if err := n.Download(); err != nil {
@@ -216,12 +216,12 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 
 	if r == nil {
 		r = &Revision{
-			PkgId:    pkg.Id,
+			PkgID:    pkg.ID,
 			Revision: n.Revision,
 		}
 		_, err = x.Insert(r)
 	} else {
-		_, err = x.Id(r.Id).Update(r)
+		_, err = x.Id(r.ID).Update(r)
 	}
 	return r, nil
 }
@@ -234,7 +234,7 @@ func IncreasePackageDownloadCount(importPath string) error {
 	}
 	pkg.DownloadCount++
 	pkg.RecentDownload++
-	_, err = x.Id(pkg.Id).Update(pkg)
+	_, err = x.Id(pkg.ID).Update(pkg)
 	return err
 }
 
@@ -264,7 +264,7 @@ func cleanExpireRevesions() {
 			return err
 		}
 
-		if _, err = x.Id(rev.Id).Delete(new(Revision)); err != nil {
+		if _, err = x.Id(rev.ID).Delete(new(Revision)); err != nil {
 			return err
 		}
 

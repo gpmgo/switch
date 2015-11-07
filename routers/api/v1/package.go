@@ -17,7 +17,7 @@ package v1
 import (
 	"path"
 
-	"github.com/Unknwon/macaron"
+	"gopkg.in/macaron.v1"
 
 	"github.com/gpmgo/switch/models"
 	"github.com/gpmgo/switch/modules/archive"

@@ -16,7 +16,7 @@ package models
 
 // Downloader represents a package download IP.
 type Downloader struct {
-	Id         int64
+	ID   int64  `xorm:"pk autoincr"`
 	RemoteAddr string `xorm:"UNIQUE"`
 }
 

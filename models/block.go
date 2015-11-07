@@ -41,7 +41,7 @@ func (e *BlockError) Error() string {
 
 // Block represents information of a blocked package.
 type Block struct {
-	Id         int64
+	ID         int64  `xorm:"pk autoincr"`
 	ImportPath string `xorm:"UNIQUE"`
 	Note       string
 }
@@ -79,14 +79,14 @@ func BlockPackage(importPath, note string) (keys []string, err error) {
 		case QINIU:
 			keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
 		}
-		if _, err = sess.Id(rev.Id).Delete(new(Revision)); err != nil {
+		if _, err = sess.Id(rev.ID).Delete(new(Revision)); err != nil {
 			sess.Rollback()
 			return nil, err
 		}
 	}
 	os.RemoveAll(path.Join(setting.ArchivePath, pkg.ImportPath))
 
-	if _, err = sess.Id(pkg.Id).Delete(new(Package)); err != nil {
+	if _, err = sess.Id(pkg.ID).Delete(new(Package)); err != nil {
 		sess.Rollback()
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func UnblockPackage(id int64) error {
 
 // BlockRule represents a rule for blocking packages.
 type BlockRule struct {
-	Id   int64
+	ID   int64  `xorm:"pk autoincr"`
 	Rule string `xorm:"UNIQUE"`
 	Note string
 }
@@ -127,8 +127,8 @@ func NewBlockRule(r *BlockRule) error {
 	return err
 }
 
-// GetBlockRuleById returns a block rule by given ID.
-func GetBlockRuleById(id int64) (*BlockRule, error) {
+// GetBlockRuleByID returns a block rule by given ID.
+func GetBlockRuleByID(id int64) (*BlockRule, error) {
 	r := new(BlockRule)
 	has, err := x.Id(id).Get(r)
 	if err != nil {
@@ -182,7 +182,7 @@ func IsPackageBlocked(path string) (bool, error, error) {
 
 // RunBlockRule applies given block rule to all packages.
 func RunBlockRule(id int64) (count int64, keys []string, err error) {
-	r, err := GetBlockRuleById(id)
+	r, err := GetBlockRuleByID(id)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -213,19 +213,19 @@ func RunBlockRule(id int64) (count int64, keys []string, err error) {
 				keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
 			}
 
-			if _, err = x.Id(rev.Id).Delete(new(Revision)); err != nil {
+			if _, err = x.Id(rev.ID).Delete(new(Revision)); err != nil {
 				return fmt.Errorf("error deleting revision(%s-%s): %v", pkg.ImportPath, rev.Revision, err)
 			}
 		}
 		os.RemoveAll(path.Join(setting.ArchivePath, pkg.ImportPath))
 
 		if setting.ProdMode {
-			if _, err = x.Id(pkg.Id).Delete(new(Package)); err != nil {
+			if _, err = x.Id(pkg.ID).Delete(new(Package)); err != nil {
 				return fmt.Errorf("error deleting package(%s): %v", pkg.ImportPath, err)
 			}
 		}
 
-		log.Info("[%d] Package blocked: %s", r.Id, pkg.ImportPath)
+		log.Info("[%d] Package blocked: %s", r.ID, pkg.ImportPath)
 
 		count++
 		return nil
