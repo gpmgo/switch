@@ -1,5 +1,8 @@
 [run]
-init_cmds = [["./switch"]]
+init_cmds = [
+	["make"],
+	["./switch"]
+]
 watch_all = true
 watch_dirs = [
 	"$WORKDIR/models",
@@ -9,7 +12,6 @@ watch_dirs = [
 watch_exts = [".go", ".ini"]
 build_delay = 1500
 cmds = [
-	["go", "install"],
-	["go", "build"],
+	["make"],
 	["./switch"]
 ]

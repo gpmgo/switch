@@ -20,10 +20,10 @@ import (
 	"net/http"
 	"path"
 	"regexp"
-	"sort"
 	"strings"
 
 	"github.com/Unknwon/com"
+	"github.com/mcuadros/go-version"
 
 	"github.com/gpmgo/switch/modules/log"
 	"github.com/gpmgo/switch/modules/setting"
@@ -69,25 +69,33 @@ func getGopkgRevision(client *http.Client, n *Node) error {
 	lines := strings.Split(string(data), "\n")
 
 	// Sort out all references and find the most latest and relevent one.
-	candidates := make([]string, 0, 3)
-	revisions := make(map[string]string)
+	latestVersion := "0.0.0"
+	latestRevision := ""
 	for _, line := range lines {
+		// Filter non-version not same range version references.
 		if !strings.Contains(line, branchRef) && !strings.Contains(line, tagRef) {
 			continue
 		}
 		log.Trace(line)
+
+		// Extract exact version number.
 		refName := strings.TrimSuffix(line[45:], "^{}")
-		candidates = append(candidates, refName)
-		revisions[refName] = line[4:44]
+		fields := strings.Split(refName, "/")
+		if len(fields) != 3 {
+			continue
+		}
+
+		if version.Compare(fields[2], latestVersion, ">") {
+			latestVersion = fields[2]
+			latestRevision = line[4:44]
+		}
 	}
 
-	if len(candidates) == 0 {
+	if len(latestRevision) == 0 {
 		return fmt.Errorf("cannot find revision in page: %s", n.ImportPath)
 	}
 
-	sort.Strings(candidates)
-
-	n.Revision = revisions[candidates[len(candidates)-1]]
+	n.Revision = latestRevision
 	n.ArchivePath = path.Join(setting.ArchivePath, n.ImportPath, n.Revision+".zip")
 	return nil
 }
