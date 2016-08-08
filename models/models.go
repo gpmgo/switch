@@ -16,6 +16,7 @@ package models
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path"
 	"time"
@@ -50,7 +51,7 @@ func init() {
 	x.SetMapper(core.GonicMapper{})
 
 	if setting.ProdMode {
-		x.SetLogger(nil)
+		x.SetLogger(xorm.NewSimpleLogger(ioutil.Discard))
 	}
 
 	if err = x.Sync2(new(Package), new(Revision), new(Downloader),
