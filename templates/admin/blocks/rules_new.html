@@ -1,11 +1,11 @@
-{% extends "../base/base.html" %}
+{% extends "base/base.html" %}
 {% block body %}
 <h3 class="ui dividing header">
   Add New Block Rule
 </h3>
 <form method="post">
   <div class="ui {% if Flash.ErrorMsg %}error {% endif %}form">
-    {% include "../base/alert.html" %}
+    {% include "base/alert.html" %}
     <div class="field">
       <label>
        Rule
