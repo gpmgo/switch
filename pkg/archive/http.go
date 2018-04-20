@@ -20,7 +20,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gpmgo/switch/modules/log"
+	"github.com/gpmgo/switch/pkg/log"
 )
 
 var (

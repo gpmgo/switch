@@ -15,7 +15,7 @@
 package admin
 
 import (
-	"github.com/gpmgo/switch/modules/middleware"
+	"github.com/gpmgo/switch/pkg/middleware"
 )
 
 func Dashboard(ctx *middleware.Context) {

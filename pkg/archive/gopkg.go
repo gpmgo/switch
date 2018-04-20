@@ -25,8 +25,8 @@ import (
 	"github.com/Unknwon/com"
 	"github.com/mcuadros/go-version"
 
-	"github.com/gpmgo/switch/modules/log"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/log"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 var (

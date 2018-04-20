@@ -21,9 +21,9 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/gpmgo/switch/modules/archive"
-	"github.com/gpmgo/switch/modules/log"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/archive"
+	"github.com/gpmgo/switch/pkg/log"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 var (

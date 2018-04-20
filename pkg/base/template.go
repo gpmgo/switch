@@ -22,8 +22,8 @@ import (
 	"github.com/Unknwon/i18n"
 	"gopkg.in/fsnotify.v1"
 
-	"github.com/gpmgo/switch/modules/log"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/log"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 func monitorI18nLocale() {

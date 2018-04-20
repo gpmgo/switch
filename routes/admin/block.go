@@ -18,10 +18,10 @@ import (
 	"fmt"
 
 	"github.com/gpmgo/switch/models"
-	"github.com/gpmgo/switch/modules/log"
-	"github.com/gpmgo/switch/modules/middleware"
-	"github.com/gpmgo/switch/modules/qiniu"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/log"
+	"github.com/gpmgo/switch/pkg/middleware"
+	"github.com/gpmgo/switch/pkg/qiniu"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 func Blocks(ctx *middleware.Context) {

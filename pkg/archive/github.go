@@ -24,7 +24,7 @@ import (
 
 	"github.com/Unknwon/com"
 
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 var (

@@ -23,7 +23,7 @@ import (
 	"gopkg.in/ini.v1"
 	"gopkg.in/macaron.v1"
 
-	"github.com/gpmgo/switch/modules/log"
+	"github.com/gpmgo/switch/pkg/log"
 )
 
 var (

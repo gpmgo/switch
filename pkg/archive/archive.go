@@ -21,7 +21,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 var (

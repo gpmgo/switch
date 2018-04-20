@@ -23,10 +23,10 @@ import (
 	"github.com/Unknwon/com"
 
 	"github.com/gpmgo/switch/models"
-	"github.com/gpmgo/switch/modules/archive"
-	"github.com/gpmgo/switch/modules/middleware"
-	"github.com/gpmgo/switch/modules/qiniu"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/archive"
+	"github.com/gpmgo/switch/pkg/middleware"
+	"github.com/gpmgo/switch/pkg/qiniu"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 type ApiRevesion struct {

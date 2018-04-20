@@ -6,7 +6,7 @@ import (
 	"github.com/qiniu/api.v6/io"
 	"github.com/qiniu/api.v6/rs"
 
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 func GenUptoken() string {

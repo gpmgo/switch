@@ -20,10 +20,10 @@ import (
 	"gopkg.in/macaron.v1"
 
 	"github.com/gpmgo/switch/models"
-	"github.com/gpmgo/switch/modules/archive"
-	"github.com/gpmgo/switch/modules/base"
-	"github.com/gpmgo/switch/modules/middleware"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/archive"
+	"github.com/gpmgo/switch/pkg/base"
+	"github.com/gpmgo/switch/pkg/middleware"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 func PackageFilter() macaron.Handler {

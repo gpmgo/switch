@@ -12,11 +12,11 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package routers
+package routes
 
 import (
 	"github.com/gpmgo/switch/models"
-	"github.com/gpmgo/switch/modules/middleware"
+	"github.com/gpmgo/switch/pkg/middleware"
 )
 
 func Home(ctx *middleware.Context) {

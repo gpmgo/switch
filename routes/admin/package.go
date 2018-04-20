@@ -16,7 +16,7 @@ package admin
 
 import (
 	"github.com/gpmgo/switch/models"
-	"github.com/gpmgo/switch/modules/middleware"
+	"github.com/gpmgo/switch/pkg/middleware"
 )
 
 func Revisions(ctx *middleware.Context) {

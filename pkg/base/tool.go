@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 // Encode string to md5 hex value

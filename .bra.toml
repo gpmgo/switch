@@ -6,8 +6,8 @@ init_cmds = [
 watch_all = true
 watch_dirs = [
 	"$WORKDIR/models",
-	"$WORKDIR/modules",
-	"$WORKDIR/routers"
+	"$WORKDIR/pkg",
+	"$WORKDIR/routes"
 ]
 watch_exts = [".go", ".ini"]
 build_delay = 1500

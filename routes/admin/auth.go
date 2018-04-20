@@ -15,8 +15,8 @@
 package admin
 
 import (
-	"github.com/gpmgo/switch/modules/middleware"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/middleware"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 func Auth(ctx *middleware.Context) {

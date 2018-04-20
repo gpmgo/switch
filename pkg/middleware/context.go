@@ -21,9 +21,9 @@ import (
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 
-	"github.com/gpmgo/switch/modules/base"
-	"github.com/gpmgo/switch/modules/log"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/base"
+	"github.com/gpmgo/switch/pkg/log"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 // Context represents context of a request.

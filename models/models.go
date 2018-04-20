@@ -27,10 +27,10 @@ import (
 	"github.com/go-xorm/xorm"
 	"github.com/robfig/cron"
 
-	"github.com/gpmgo/switch/modules/archive"
-	"github.com/gpmgo/switch/modules/log"
-	"github.com/gpmgo/switch/modules/qiniu"
-	"github.com/gpmgo/switch/modules/setting"
+	"github.com/gpmgo/switch/pkg/archive"
+	"github.com/gpmgo/switch/pkg/log"
+	"github.com/gpmgo/switch/pkg/qiniu"
+	"github.com/gpmgo/switch/pkg/setting"
 )
 
 var (

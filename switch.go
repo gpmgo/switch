@@ -28,13 +28,13 @@ import (
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 
-	"github.com/gpmgo/switch/modules/log"
-	"github.com/gpmgo/switch/modules/middleware"
-	_ "github.com/gpmgo/switch/modules/qiniu"
-	"github.com/gpmgo/switch/modules/setting"
-	"github.com/gpmgo/switch/routers"
-	"github.com/gpmgo/switch/routers/admin"
-	"github.com/gpmgo/switch/routers/api/v1"
+	"github.com/gpmgo/switch/pkg/log"
+	"github.com/gpmgo/switch/pkg/middleware"
+	_ "github.com/gpmgo/switch/pkg/qiniu"
+	"github.com/gpmgo/switch/pkg/setting"
+	"github.com/gpmgo/switch/routes"
+	"github.com/gpmgo/switch/routes/admin"
+	"github.com/gpmgo/switch/routes/api/v1"
 )
 
 const APP_VER = "0.7.3.0420"
@@ -63,8 +63,8 @@ func main() {
 	m.Use(middleware.Contexter())
 
 	// Routes.
-	m.Get("/", routers.Home)
-	m.Route("/download", "GET,POST", routers.Download)
+	m.Get("/", routes.Home)
+	m.Route("/download", "GET,POST", routes.Download)
 	m.Get("/favicon.ico", func(ctx *middleware.Context) {
 		ctx.Redirect("/img/favicon.png")
 	})
@@ -72,8 +72,8 @@ func main() {
 	// m.Get("/about", routers.About)
 
 	// Package.
-	m.Get("/*", routers.Package)
-	m.Get("/badge/*", routers.Badge)
+	m.Get("/*", routes.Package)
+	m.Get("/badge/*", routes.Badge)
 
 	// Admin.
 	m.Post("/admin/auth", admin.AuthPost)
@@ -116,7 +116,7 @@ Disallow: /api/
 Disallow: /download`
 	})
 
-	m.NotFound(routers.NotFound)
+	m.NotFound(routes.NotFound)
 
 	listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HttpPort)
 	log.Info("Listen: http://%s", listenAddr)
