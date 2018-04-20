@@ -28,7 +28,7 @@ import (
 )
 
 var (
-	githubRevisionPattern = regexp.MustCompile(`data-clipboard-text="[a-z0-9A-Z]+`)
+	githubRevisionPattern = regexp.MustCompile(`value="[a-z0-9A-Z]+"`)
 	githubPattern         = regexp.MustCompile(`^github\.com/(?P<owner>[a-z0-9A-Z_.\-]+)/(?P<repo>[a-z0-9A-Z_.\-]+)(?P<dir>/[a-z0-9A-Z_.\-/]*)?$`)
 	golangPattern         = regexp.MustCompile(`^golang\.org/x/(?P<repo>[a-z0-9\-]+)?(?P<dir>/[a-z0-9A-Z_.\-/]+)?$`)
 )
@@ -42,16 +42,16 @@ func getGithubRevision(client *http.Client, n *Node) error {
 		return fmt.Errorf("fail to get revision(%s): %v", n.ImportPath, err)
 	}
 
-	i := bytes.Index(data, []byte(`btn-outline`))
+	i := bytes.Index(data, []byte(`commit-links-group BtnGroup`))
 	if i == -1 {
 		return fmt.Errorf("cannot find locater in page: %s", n.ImportPath)
 	}
-	data = data[i+1:]
+	data = data[i:]
 	m := githubRevisionPattern.FindSubmatch(data)
 	if m == nil {
 		return fmt.Errorf("cannot find revision in page: %s", n.ImportPath)
 	}
-	n.Revision = strings.TrimPrefix(string(m[0]), `data-clipboard-text="`)
+	n.Revision = strings.TrimSuffix(strings.TrimPrefix(string(m[0]), `value="`), `"`)
 	n.ArchivePath = path.Join(setting.ArchivePath, n.ImportPath, n.Revision+".zip")
 	return nil
 }
