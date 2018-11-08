@@ -18,10 +18,7 @@ import (
 	"fmt"
 
 	"github.com/gpmgo/switch/models"
-	"github.com/gpmgo/switch/pkg/log"
 	"github.com/gpmgo/switch/pkg/middleware"
-	"github.com/gpmgo/switch/pkg/qiniu"
-	"github.com/gpmgo/switch/pkg/setting"
 )
 
 func Blocks(ctx *middleware.Context) {
@@ -48,7 +45,7 @@ func BlockPackagePost(ctx *middleware.Context) {
 	ctx.Data["PageIsBlocks"] = true
 	ctx.Data["PageIsBlocksList"] = true
 
-	keys, err := models.BlockPackage(ctx.Query("import_path"), ctx.Query("note"))
+	_, err := models.BlockPackage(ctx.Query("import_path"), ctx.Query("note"))
 	if err != nil {
 		if err == models.ErrPackageNotExist {
 			ctx.RenderWithErr(err.Error(), "blocks/new", nil)
@@ -58,15 +55,15 @@ func BlockPackagePost(ctx *middleware.Context) {
 		return
 	}
 
-	if setting.ProdMode {
-		for _, k := range keys {
-			log.Trace("Deleting archive: %s", k)
-			if err = qiniu.DeleteArchive(k); err != nil {
-				log.Error(4, "Fail to delete archive(%s): %v", k, err)
-			}
-			log.Info("Archive deleted: %s", k)
-		}
-	}
+	// if setting.ProdMode {
+	// 	for _, k := range keys {
+	// 		log.Trace("Deleting archive: %s", k)
+	// 		if err = qiniu.DeleteArchive(k); err != nil {
+	// 			log.Error(4, "Fail to delete archive(%s): %v", k, err)
+	// 		}
+	// 		log.Info("Archive deleted: %s", k)
+	// 	}
+	// }
 
 	ctx.Flash.Success("New package has been blocked!")
 	ctx.Redirect("/admin/blocks")
@@ -127,21 +124,21 @@ func RunRule(ctx *middleware.Context) {
 	ctx.Data["PageIsBlocksRules"] = true
 
 	rid := ctx.ParamsInt64(":id")
-	count, keys, err := models.RunBlockRule(rid)
+	count, _, err := models.RunBlockRule(rid)
 	if err != nil {
 		ctx.Handle(500, "RunBlockRule", err)
 		return
 	}
 
-	if setting.ProdMode {
-		for _, k := range keys {
-			log.Trace("Deleting archive: %s", k)
-			if err = qiniu.DeleteArchive(k); err != nil {
-				log.Error(4, "Fail to delete archive(%s): %v", k, err)
-			}
-			log.Info("Archive deleted: %s", k)
-		}
-	}
+	// if setting.ProdMode {
+	// 	for _, k := range keys {
+	// 		log.Trace("Deleting archive: %s", k)
+	// 		if err = qiniu.DeleteArchive(k); err != nil {
+	// 			log.Error(4, "Fail to delete archive(%s): %v", k, err)
+	// 		}
+	// 		log.Info("Archive deleted: %s", k)
+	// 	}
+	// }
 
 	ctx.Flash.Success(fmt.Sprintf("%d packages are blocked by rule ID: %d.", count, rid))
 	ctx.Redirect("/admin/blocks/rules")

@@ -25,7 +25,6 @@ import (
 
 	"github.com/gpmgo/switch/pkg/archive"
 	"github.com/gpmgo/switch/pkg/log"
-	"github.com/gpmgo/switch/pkg/qiniu"
 	"github.com/gpmgo/switch/pkg/setting"
 )
 
@@ -39,7 +38,7 @@ type Storage int
 
 const (
 	LOCAL Storage = iota
-	QINIU
+	// QINIU
 )
 
 // Revision represents a revision of a Go package.
@@ -200,7 +199,9 @@ func CheckPkg(importPath, rev string) (*Revision, error) {
 
 	// return nil, fmt.Errorf("Revision: %s", n.Revision)
 
-	if r == nil || (r.Storage == LOCAL && !com.IsFile(n.ArchivePath)) {
+	// FIXME: Fallback to LOCAL only mode at the moment, should work out a solution to another OSS.
+	// if r == nil || (r.Storage == LOCAL && !com.IsFile(n.ArchivePath)) {
+	if r == nil || !com.IsFile(n.ArchivePath) {
 		if err := n.Download(); err != nil {
 			return nil, err
 		}
@@ -275,18 +276,18 @@ func cleanExpireRevesions() {
 				os.Remove(fpath)
 				log.Info("Revision deleted (local): %s", fpath)
 				return nil
-			case QINIU:
-				key, err := rev.KeyName()
-				if err != nil {
-					return err
-				}
-				if setting.ProdMode {
-					if err = qiniu.DeleteArchive(key); err != nil {
-						return err
-					}
-				}
-				log.Info("Revision deleted (qiniu): %s", key)
-				return nil
+			// case QINIU:
+			// 	key, err := rev.KeyName()
+			// 	if err != nil {
+			// 		return err
+			// 	}
+			// 	if setting.ProdMode {
+			// 		if err = qiniu.DeleteArchive(key); err != nil {
+			// 			return err
+			// 		}
+			// 	}
+			// 	log.Info("Revision deleted (qiniu): %s", key)
+			// 	return nil
 			default:
 				return nil
 			}

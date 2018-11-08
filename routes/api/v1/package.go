@@ -65,8 +65,8 @@ func Download(ctx *middleware.Context) {
 	switch r.Storage {
 	case models.LOCAL:
 		ctx.ServeFile(path.Join(setting.ArchivePath, importPath, r.Revision+ext), serveName)
-	case models.QINIU:
-		ctx.Redirect("http://" + setting.BucketUrl + "/" + importPath + "-" + r.Revision + ext)
+		// case models.QINIU:
+		// 	ctx.Redirect("http://" + setting.BucketUrl + "/" + importPath + "-" + r.Revision + ext)
 	}
 }
 

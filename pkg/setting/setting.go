@@ -19,7 +19,7 @@ import (
 	"os"
 
 	"github.com/Unknwon/com"
-	"github.com/qiniu/api.v6/conf"
+	// "github.com/qiniu/api.v6/conf"
 	"gopkg.in/ini.v1"
 	"gopkg.in/macaron.v1"
 
@@ -114,11 +114,11 @@ func init() {
 	GithubCredentials = "client_id=" + Cfg.Section("github").Key("CLIENT_ID").String() +
 		"&client_secret=" + Cfg.Section("github").Key("CLIENT_SECRET").String()
 
-	conf.UP_HOST = Cfg.Section("qiniu").Key("UP_HOST").MustString(conf.UP_HOST)
+	// conf.UP_HOST = Cfg.Section("qiniu").Key("UP_HOST").MustString(conf.UP_HOST)
 	BucketName = Cfg.Section("qiniu").Key("BUCKET_NAME").String()
 	BucketUrl = Cfg.Section("qiniu").Key("BUCKET_URL").String()
-	conf.ACCESS_KEY = Cfg.Section("qiniu").Key("ACCESS_KEY").String()
-	conf.SECRET_KEY = Cfg.Section("qiniu").Key("SECRET_KEY").String()
+	// conf.ACCESS_KEY = Cfg.Section("qiniu").Key("ACCESS_KEY").String()
+	// conf.SECRET_KEY = Cfg.Section("qiniu").Key("SECRET_KEY").String()
 
 	AccessToken = Cfg.Section("admin").Key("ACCESS_TOKEN").String()
 }

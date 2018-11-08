@@ -21,7 +21,6 @@ import (
 	"path"
 	"regexp"
 
-	"github.com/gpmgo/switch/pkg/archive"
 	"github.com/gpmgo/switch/pkg/log"
 	"github.com/gpmgo/switch/pkg/setting"
 )
@@ -73,12 +72,12 @@ func BlockPackage(importPath, note string) (keys []string, err error) {
 		return nil, fmt.Errorf("error getting revisions(%s): %v", pkg.ImportPath, err)
 	}
 
-	ext := archive.GetExtension(pkg.ImportPath)
+	// ext := archive.GetExtension(pkg.ImportPath)
 	for _, rev := range revs {
-		switch rev.Storage {
-		case QINIU:
-			keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
-		}
+		// switch rev.Storage {
+		// case QINIU:
+		// 	keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
+		// }
 		if _, err = sess.Id(rev.ID).Delete(new(Revision)); err != nil {
 			sess.Rollback()
 			return nil, err
@@ -206,12 +205,12 @@ func RunBlockRule(id int64) (count int64, keys []string, err error) {
 		}
 
 		// Delete package archives.
-		ext := archive.GetExtension(pkg.ImportPath)
+		// ext := archive.GetExtension(pkg.ImportPath)
 		for _, rev := range revs {
-			switch rev.Storage {
-			case QINIU:
-				keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
-			}
+			// switch rev.Storage {
+			// case QINIU:
+			// 	keys = append(keys, pkg.ImportPath+"-"+rev.Revision+ext)
+			// }
 
 			if _, err = x.Id(rev.ID).Delete(new(Revision)); err != nil {
 				return fmt.Errorf("error deleting revision(%s-%s): %v", pkg.ImportPath, rev.Revision, err)
